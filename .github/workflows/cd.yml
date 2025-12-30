@@ -83,7 +83,8 @@ jobs:
               --name my-app-container \
               --restart always \
               -p 8080:8080 \
-              -e DB_NAME="$DB_NAME" \
+              --add-host=host.docker.internal:host-gateway \
+              -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/$DB_NAME \
               -e DB_USER="$DB_USER" \
               -e DB_PASSWORD="$DB_PASSWORD" \
               $IMAGE
