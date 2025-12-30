@@ -63,19 +63,18 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          env:
-            IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            DB_NAME: ${{ env.DB_NAME }}
-            DB_USER: ${{ env.DB_USER }}
-            DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          envs: REGISTRY,IMAGE_NAME,DB_NAME,DB_USER,DB_PASSWORD,GITHUB_ACTOR
           script: |
-            # 1. Log in to GitHub Container Registry on the EC2
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+            # Define the image string inside the script for safety
+            IMAGE="${REGISTRY}/${IMAGE_NAME}:latest"
+            
+            # 1. Log in to GitHub Container Registry
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u $GITHUB_ACTOR --password-stdin
             
             # 2. Pull the latest image
             docker pull $IMAGE
             
-            # 3. Stop and remove the existing container if it exists
+            # 3. Stop and remove the existing container
             docker stop my-app-container || true
             docker rm my-app-container || true
             
@@ -83,10 +82,11 @@ jobs:
             docker run -d \
               --name my-app-container \
               --restart always \
-              -e DB_NAME=$DB_NAME \
-              -e DB_USER=$DB_USER \
-              -e DB_PASSWORD=$DB_PASSWORD \
+              -p 8080:8080 \
+              -e DB_NAME="$DB_NAME" \
+              -e DB_USER="$DB_USER" \
+              -e DB_PASSWORD="$DB_PASSWORD" \
               $IMAGE
             
-            # 5. Optional: Cleanup old unused images to save disk space
+            # 5. Cleanup
             docker image prune -f
