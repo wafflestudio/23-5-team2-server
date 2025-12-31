@@ -68,26 +68,26 @@ jobs:
             # Define the image string inside the script for safety
             IMAGE="${REGISTRY}/${IMAGE_NAME}:latest"
             
-            # 1. Log in to GitHub Container Registry
+            echo "== LOGIN =="
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u $GITHUB_ACTOR --password-stdin
             
-            # 2. Pull the latest image
+            echo "== PULL =="
             docker pull $IMAGE
             
-            # 3. Stop and remove the existing container
+            echo "== STOP =="
             docker stop my-app-container || true
             docker rm my-app-container || true
             
-            # 4. Run the new container
+            echo "== RUN =="
             docker run -d \
               --name my-app-container \
+              --network app-network \
               --restart always \
               -p 8080:8080 \
-              --add-host=host.docker.internal:host-gateway \
-              -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/$DB_NAME \
+              -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/$DB_NAME \
               -e DB_USER="$DB_USER" \
               -e DB_PASSWORD="$DB_PASSWORD" \
               $IMAGE
             
-            # 5. Cleanup
+            echo "== PRUNE =="
             docker image prune -f
