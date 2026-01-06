@@ -15,7 +15,8 @@ class HelathrouteTests(
     @Autowired private val mockMvc: MockMvc
 ){
 @Test
-fun actuator_health_is_up() {
+fun health_is_up() {
+    //healthroute 정상작동한다
     mockMvc.perform(get("/actuator/health"))
         .andExpect(status().isOk)
         .andExpect(jsonPath("$.status").value("UP"))
