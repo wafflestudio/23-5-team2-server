@@ -1,26 +1,30 @@
 package com.wafflestudio.team2server.crawler.controller
 
-import com.wafflestudio.team2server.crawler.service.CrawlerService
+import com.wafflestudio.team2server.crawler.BaseCrawler
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/crawler")
+@RequestMapping("/api/crawlers")
 class CrawlerController(
-    private val crawlerService: CrawlerService,
+    private val crawlers: List<BaseCrawler>,
 ) {
-    /* 테스트용 버튼: 브라우저에서 접속하면 즉시 실행됨
-    // 접속 주소: http://localhost:8080/api/crawler/test
-    @GetMapping("/test")
-    fun runTestCrawler(): String {
-        println("수동으로 크롤러를 실행합니다...")
+    @PostMapping("/{crawlerCode}/run")
+    fun manualRun(
+        @PathVariable crawlerCode: String,
+    ): ResponseEntity<String> {
+        val targetCrawler =
+            crawlers.find { it.code == crawlerCode }
+                ?: return ResponseEntity.notFound().build()
 
         try {
-            crawlerService.crawlMySnu()
-            return " 크롤링 성공! (IntelliJ 콘솔 로그를 확요)"
+            targetCrawler.crawl()
+            return ResponseEntity.ok("크롤러($crawlerCode) 실행 완료!")
         } catch (e: Exception) {
-            return " 에러 발생: ${e.message}"
+            return ResponseEntity.internalServerError().body(" 실행 실패: ${e.message}")
         }
     }
-     */
 }
