@@ -45,6 +45,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:1.21.4")
     testImplementation("org.testcontainers:mysql:1.21.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("org.jsoup:jsoup:1.17.2")
 }
 
 kotlin {

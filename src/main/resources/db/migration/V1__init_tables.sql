@@ -1,5 +1,12 @@
 START TRANSACTION;
 
+/*
+Local Test 용
+USE mydatabase;
+INSERT INTO boards (id, name, source_url)
+VALUES (1, 'mysnu 공지', 'https://my.snu.ac.kr/ctt/bb/bulletin?b=1');
+*/
+
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     local_id VARCHAR(255) UNIQUE,
@@ -22,7 +29,8 @@ CREATE TABLE boards (
 CREATE TABLE articles (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     board_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
+    title VARCHAR(500) NOT NULL,
+    content LONGTEXT NOT NULL,
     author VARCHAR(255) NOT NULL,
     origin_link VARCHAR(500),
     published_at TIMESTAMP NOT NULL,
