@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: 23-5-team2-server
+
+  # Database Connection
+  datasource:
+    url: jdbc:mysql://localhost:3306/${DB_NAME:mydatabase}
+    username: ${DB_USER:user}
+    password: ${DB_PASSWORD:secret}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Google OAuth2
+  security:
+    oauth2:
+      client:
+        registration:
+          config:
+            import: optional:file:.env[.properties]
+          google:
+            client-id: 932303076890-c7ucenrpg3co0pr5vkui62ufelpuclf2.apps.googleusercontent.com
+            client-secret: $GOOGLE_CLIENT_SECRET
+            scope: email
+
+jwt:
+  secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-jwt-token-generation}
+  expiration-in-ms: 86400000
+app:
+  frontend:
+    url: http://localhost:3000
+
+# Actuator Health
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
