@@ -2,7 +2,7 @@ package com.wafflestudio.team2server.article.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
-import java.time.LocalDateTime
+import java.time.Instant
 
 @Table("articles")
 data class Article(
@@ -13,7 +13,7 @@ data class Article(
     val author: String,
     val title: String,
     val originLink: String,
-    val publishedAt: LocalDateTime,
-    val createdAt: LocalDateTime? = null,
-    val updatedAt: LocalDateTime? = null,
+    val publishedAt: Instant,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 )

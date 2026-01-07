@@ -8,7 +8,9 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -22,7 +24,7 @@ class MysnuCrawlerService(
     override val code = "mysnu"
     override val crawlIntervalSeconds = 3600L
 
-    private val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     override fun getPostList(document: Document): List<Element> {
         val list = document.select("ul[data-name='post_list']")
@@ -58,9 +60,10 @@ class MysnuCrawlerService(
 
         val publishedAt =
             try {
-                LocalDateTime.parse(dateStr, formatter)
+                val localDateTime = LocalDateTime.parse(dateStr, formatter)
+                localDateTime.atZone(ZoneId.of("Asia/Seoul")).toInstant()
             } catch (e: Exception) {
-                LocalDateTime.now()
+                Instant.now()
             }
 
         return Article(
@@ -70,8 +73,8 @@ class MysnuCrawlerService(
             author = author,
             originLink = url,
             publishedAt = publishedAt,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now(),
+            createdAt = Instant.now(),
+            updatedAt = Instant.now(),
         )
     }
 

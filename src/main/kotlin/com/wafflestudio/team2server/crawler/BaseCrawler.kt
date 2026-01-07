@@ -6,7 +6,7 @@ import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.time.LocalDateTime
+import java.time.Instant
 
 abstract class BaseCrawler(
     private val crawlerRepository: CrawlerRepository,
@@ -78,7 +78,7 @@ abstract class BaseCrawler(
 
     protected fun updateExecutionTime() {
         try {
-            val now = LocalDateTime.now()
+            val now = Instant.now()
             val next = now.plusSeconds(crawlIntervalSeconds)
             crawlerRepository.updateLastCrawledAt(targetBoardId, now, next)
         } catch (e: Exception) {

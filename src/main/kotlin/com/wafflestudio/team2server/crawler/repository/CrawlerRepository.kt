@@ -5,7 +5,7 @@ import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.ListCrudRepository
 import org.springframework.data.repository.query.Param
-import java.time.LocalDateTime
+import java.time.Instant
 
 interface CrawlerRepository : ListCrudRepository<Article, Long> {
     fun existsByOriginLink(originLink: String): Boolean
@@ -14,7 +14,7 @@ interface CrawlerRepository : ListCrudRepository<Article, Long> {
     @Query("UPDATE crawlers SET updated_at = :now, next_update_at = :next WHERE board_id = :boardId")
     fun updateLastCrawledAt(
         @Param("boardId") boardId: Long,
-        @Param("now") now: LocalDateTime,
-        @Param("next") nextUpdateAt: LocalDateTime,
+        @Param("now") now: Instant,
+        @Param("next") nextUpdateAt: Instant,
     )
 }
