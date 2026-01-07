@@ -7,13 +7,13 @@ import java.time.Instant
 @Table("articles")
 data class Article(
     @Id
-    val id: Long? = null,
-    val boardId: Long,
-    val content: String,
-    val author: String,
-    val title: String,
-    val originLink: String,
-    val publishedAt: Instant,
-    val createdAt: Instant? = null,
-    val updatedAt: Instant? = null,
+    var id: Long? = null,
+    var boardId: Long,
+    var content: String,
+    var author: String,
+    var title: String,
+    var originLink: String,
+    var publishedAt: Instant,
+    var createdAt: Instant? = null,
+    var updatedAt: Instant? = null,
 )
