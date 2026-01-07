@@ -24,7 +24,7 @@ class MysnuCrawlerService(
     override val code = "mysnu"
     override val crawlIntervalSeconds = 3600L
 
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
 
     override fun getPostList(document: Document): List<Element> {
         val list = document.select("ul[data-name='post_list']")
