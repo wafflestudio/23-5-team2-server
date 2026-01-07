@@ -21,9 +21,9 @@ class UserArgumentResolver(
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
-    ): User? =
+    ): User =
         runCatching {
             val userId = webRequest.getAttribute("userId", 0) as Long
             userRepository.findById(userId)
-        }.getOrNull()?.get()
+        }.getOrNull()?.get() ?: throw AuthenticateException()
 }

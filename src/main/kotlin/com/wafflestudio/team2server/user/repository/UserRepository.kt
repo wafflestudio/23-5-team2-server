@@ -10,5 +10,5 @@ interface UserRepository : ListCrudRepository<User, Long> {
 
     fun existsByLocalId(localId: String): Boolean
 
-    fun existsByOAuthId(oauthId: String): Boolean
+    fun existsByOauthId(oauthId: String): Boolean
 }

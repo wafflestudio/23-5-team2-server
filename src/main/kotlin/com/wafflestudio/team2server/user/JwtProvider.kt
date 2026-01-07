@@ -6,7 +6,7 @@ import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
-import java.util.*
+import java.util.Date
 
 @Component
 class JwtProvider(
@@ -48,7 +48,7 @@ class JwtProvider(
                 .build()
                 .parseClaimsJws(token)
             return true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // do nothing
         }
         return false
@@ -70,6 +70,6 @@ class JwtProvider(
             .from("AUTH-TOKEN", token)
             .httpOnly(true) // Prevents JS access (XSS protection)
             .path("/") // Available for all routes
-            .maxAge(3600) // 1 hour expiry
+            .maxAge((getExpiration(token) - System.currentTimeMillis()) / 1000)
             .build()
 }

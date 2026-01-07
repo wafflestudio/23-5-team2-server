@@ -52,3 +52,17 @@ class ChangePasswordIllegalStateException :
         httpStatusCode = HttpStatus.BAD_REQUEST,
         msg = "Only local user is allowed to change password",
     )
+
+class InvalidOldPasswordException :
+    UserException(
+        errorCode = 0,
+        httpStatusCode = HttpStatus.BAD_REQUEST,
+        msg = "Old password is invalid",
+    )
+
+class InvalidNewPasswordException :
+    UserException(
+        errorCode = 0,
+        httpStatusCode = HttpStatus.BAD_REQUEST,
+        msg = "New password is invalid",
+    )

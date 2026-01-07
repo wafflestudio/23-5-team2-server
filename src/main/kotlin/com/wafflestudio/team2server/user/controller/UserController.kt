@@ -1,5 +1,4 @@
 package com.wafflestudio.team2server.user.controller
-import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.LoggedInUser
 import com.wafflestudio.team2server.user.dto.UpdateLocalRequest
 import com.wafflestudio.team2server.user.dto.core.UserDto
@@ -10,12 +9,10 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "User", description = "사용자 API")
 class UserController(
     private val userService: UserService,
-    private val jwtProvider: JwtProvider,
 ) {
     @Operation(summary = "본인 정보 조회", description = "로그인한 사용자의 정보를 조회합니다")
     @ApiResponses(
@@ -39,22 +35,13 @@ class UserController(
         @Parameter(hidden = true) @LoggedInUser user: User,
     ): ResponseEntity<UserDto> = ResponseEntity.ok(UserDto(user))
 
-    @PostMapping("/logout")
-    fun logout(
-        @Parameter(hidden = true) @LoggedInUser user: User,
-    ): ResponseEntity<Unit> {
-        val cookie = jwtProvider.createJwtCookie("")
-        val headers = HttpHeaders()
-        headers.add(HttpHeaders.SET_COOKIE, cookie.toString())
-        return ResponseEntity.ok().headers(headers).build()
-    }
-
     @PatchMapping("/me/local")
     fun updateLocal(
         @Parameter(hidden = true) @LoggedInUser user: User,
         @RequestBody updateLocalRequest: UpdateLocalRequest,
     ): ResponseEntity<Unit> {
-        userService.updateLocal(user, updateLocalRequest.newPassword)
+        val (oldPassword, newPassword) = updateLocalRequest
+        userService.updateLocal(user, oldPassword, newPassword)
         return ResponseEntity.noContent().build()
     }
 

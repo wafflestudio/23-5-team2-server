@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -61,6 +62,20 @@ class AuthController(
                 password = loginRequest.password,
             )
         val cookie = jwtProvider.createJwtCookie(token)
+        val headers = HttpHeaders()
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString())
+        return ResponseEntity.ok().headers(headers).build()
+    }
+
+    @PostMapping("/logout")
+    fun logout(): ResponseEntity<Unit> {
+        val cookie =
+            ResponseCookie
+                .from("AUTH-TOKEN", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build()
         val headers = HttpHeaders()
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString())
         return ResponseEntity.ok().headers(headers).build()

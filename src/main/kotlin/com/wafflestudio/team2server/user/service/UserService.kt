@@ -2,6 +2,8 @@ package com.wafflestudio.team2server.user.service
 
 import com.wafflestudio.team2server.user.AuthenticateException
 import com.wafflestudio.team2server.user.ChangePasswordIllegalStateException
+import com.wafflestudio.team2server.user.InvalidNewPasswordException
+import com.wafflestudio.team2server.user.InvalidOldPasswordException
 import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.SignUpBadLocalIdException
 import com.wafflestudio.team2server.user.SignUpBadPasswordException
@@ -11,7 +13,9 @@ import com.wafflestudio.team2server.user.dto.core.UserDto
 import com.wafflestudio.team2server.user.model.User
 import com.wafflestudio.team2server.user.repository.UserRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.stereotype.Service
 
+@Service
 class UserService(
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
@@ -44,7 +48,7 @@ class UserService(
     }
 
     fun registerGoogle(email: String): UserDto {
-        if (userRepository.existsByOAuthId(email)) {
+        if (userRepository.existsByOauthId(email)) {
             throw SignUpOauthIdConflictException()
         }
         val user = userRepository.save(User(oauthId = email, oauthProvider = "google"))
@@ -65,15 +69,19 @@ class UserService(
 
     fun updateLocal(
         user: User,
+        oldPassword: String,
         newPassword: String,
     ): UserDto {
         if (user.oauthProvider != null) {
             throw ChangePasswordIllegalStateException()
         }
-        if (newPassword.length < 4) {
-            throw SignUpBadPasswordException()
+        if (newPassword.length < 4 || oldPassword == newPassword) {
+            throw InvalidNewPasswordException()
         }
-        user.password = newPassword
+        if (bcryptPasswordEncoder.matches(oldPassword, user.password).not()) {
+            throw InvalidOldPasswordException()
+        }
+        user.password = bcryptPasswordEncoder.encode(newPassword)
         userRepository.save(user)
         return UserDto(user)
     }

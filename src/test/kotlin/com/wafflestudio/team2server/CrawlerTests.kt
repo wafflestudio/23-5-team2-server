@@ -1,18 +1,23 @@
 package com.wafflestudio.team2server
 
-import com.wafflestudio.team2server.crawler.controller.CrawlerController
 import com.wafflestudio.team2server.crawler.service.MysnuCrawlerService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.testcontainers.junit.jupiter.Testcontainers
 
-@WebMvcTest(CrawlerController::class)
+@SpringBootTest
+@ActiveProfiles("test")
+@Testcontainers
+@AutoConfigureMockMvc
 class CrawlerTests
     @Autowired
     constructor(
@@ -22,7 +27,7 @@ class CrawlerTests
         private lateinit var mysnuCrawlerService: MysnuCrawlerService
 
         @Test
-        fun `크롤러 수동 실행 성공`() {
+        fun `call crawler service`() {
             given(mysnuCrawlerService.code).willReturn("mysnu")
 
             mvc
