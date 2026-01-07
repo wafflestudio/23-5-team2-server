@@ -11,9 +11,10 @@ interface CrawlerRepository : ListCrudRepository<Article, Long> {
     fun existsByOriginLink(originLink: String): Boolean
 
     @Modifying
-    @Query("UPDATE crawlers SET updated_at = :now WHERE board_id = :boardId")
+    @Query("UPDATE crawlers SET updated_at = :now, next_update_at = :next WHERE board_id = :boardId")
     fun updateLastCrawledAt(
         @Param("boardId") boardId: Long,
         @Param("now") now: LocalDateTime,
+        @Param("next") nextUpdateAt: LocalDateTime,
     )
 }

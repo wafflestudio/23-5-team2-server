@@ -20,6 +20,7 @@ class MysnuCrawlerService(
     override val baseUrl = "https://my.snu.ac.kr"
     override val targetBoardId = 2L
     override val code = "mysnu"
+    override val crawlIntervalSeconds = 3600L
 
     private val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
 
@@ -74,7 +75,7 @@ class MysnuCrawlerService(
         )
     }
 
-    @Scheduled(fixedRate = 360000)
+    @Scheduled(fixedRate = 3600000)
     fun runScheduled() {
         crawl()
         updateExecutionTime()

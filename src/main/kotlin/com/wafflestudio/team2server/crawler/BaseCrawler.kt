@@ -16,6 +16,7 @@ abstract class BaseCrawler(
     abstract val baseUrl: String
     abstract val targetBoardId: Long
     abstract val code: String
+    abstract val crawlIntervalSeconds: Long
 
     protected abstract fun getPostList(document: Document): List<Element>
 
@@ -31,9 +32,18 @@ abstract class BaseCrawler(
         title: String,
     ): Article
 
-    fun crawl() {
+    /**
+     * 해당 사이트의 게시글 목록을 가져와 크롤링을 수행합니다.
+     *
+     * 기본 구현은 목록을 한 번만 조회(fetch)하도록 되어 있습니다.
+     * 대부분의 사이트는 최신 공지가 첫 페이지에 위치하므로, 별도의 수정 없이 이 메서드를 사용하면 됩니다.
+     *
+     * 단, '컴퓨터공학부' 사이트와 같이 공지사항 확인을 위해 여러 페이지를 넘겨야(pagination) 하는 경우,
+     * 이 메서드를 override 하여 사이트 특성에 맞는 탐색 로직을 직접 구현해야 합니다.
+     */
+    open fun crawl() {
         try {
-            val listDoc = connect(listUrl)
+            val listDoc = fetch(listUrl)
 
             val rows = getPostList(listDoc)
 
@@ -45,7 +55,7 @@ abstract class BaseCrawler(
                     continue
                 }
 
-                val detailDoc = connect(detailUrl)
+                val detailDoc = fetch(detailUrl)
 
                 val title = getPostTitle(row)
 
@@ -59,7 +69,7 @@ abstract class BaseCrawler(
         }
     }
 
-    private fun connect(url: String): Document =
+    private fun fetch(url: String): Document =
         Jsoup
             .connect(url)
             .userAgent("Mozilla/5.0 ...")
@@ -68,7 +78,9 @@ abstract class BaseCrawler(
 
     protected fun updateExecutionTime() {
         try {
-            crawlerRepository.updateLastCrawledAt(targetBoardId, LocalDateTime.now())
+            val now = LocalDateTime.now()
+            val next = now.plusSeconds(crawlIntervalSeconds)
+            crawlerRepository.updateLastCrawledAt(targetBoardId, now, next)
         } catch (e: Exception) {
         }
     }
