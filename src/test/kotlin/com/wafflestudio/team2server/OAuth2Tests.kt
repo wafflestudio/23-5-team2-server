@@ -228,8 +228,10 @@ class OAuth2Tests
                 )
             }
 
-            val userCountAfterFirstLogin = userRepository.findAll().count { it.oauthId == email }
-            assertEquals(1, userCountAfterFirstLogin)
+            // Verify user exists
+            assertTrue(userRepository.existsByOauthId(email))
+            val userAfterFirstLogin = userRepository.findByOauthId(email)
+            assertNotNull(userAfterFirstLogin)
 
             // Second login - should not create duplicate
             if (!userRepository.existsByOauthId(email)) {
@@ -241,7 +243,10 @@ class OAuth2Tests
                 )
             }
 
-            val userCountAfterSecondLogin = userRepository.findAll().count { it.oauthId == email }
-            assertEquals(1, userCountAfterSecondLogin)
+            // Verify user still exists and is the same user
+            assertTrue(userRepository.existsByOauthId(email))
+            val userAfterSecondLogin = userRepository.findByOauthId(email)
+            assertNotNull(userAfterSecondLogin)
+            assertEquals(userAfterFirstLogin?.id, userAfterSecondLogin?.id)
         }
     }
