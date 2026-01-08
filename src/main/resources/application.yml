@@ -5,9 +5,6 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
-  profiles:
-    active: local
-
   # Database Connection
   datasource:
     url: jdbc:mysql://localhost:3306/${DB_NAME:mydatabase}
@@ -24,6 +21,10 @@ spring:
             client-id: 932303076890-c7ucenrpg3co0pr5vkui62ufelpuclf2.apps.googleusercontent.com
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email
+
+app:
+  frontend:
+    url: http://localhost:5173
 
 jwt:
   secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-jwt-token-generation}
