@@ -9,4 +9,4 @@ RUN ./gradlew bootJar
 # 5. 포트 노출 (컨테이너가 8080 포트를 사용함을 명시)
 EXPOSE 8080
 # 6. 실행 명령어 (컨테이너 시작 시 실행될 명령어)
-ENTRYPOINT exec java $JAVA_OPTS -jar build/libs/team2-server-0.0.1-SNAPSHOT.jar
+ENTRYPOINT exec java $JAVA_OPTS -jar build/libs/team2-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
