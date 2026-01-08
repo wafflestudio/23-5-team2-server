@@ -50,11 +50,11 @@ class UserService(
         localId: String,
         password: String,
     ): String {
-        val user = userRepository.findByLocalId(localId) ?: throw AuthenticateException()
-        if (bcryptPasswordEncoder.matches(password, user.password).not()) {
+        val user = userRepository.findByLocalId(localId)
+        if (bcryptPasswordEncoder.matches(password, user?.password).not()) {
             throw AuthenticateException()
         }
-        val jwt = jwtProvider.createToken(user.id!!)
+        val jwt = jwtProvider.createToken(user?.id!!)
         return jwt
     }
 
@@ -66,11 +66,14 @@ class UserService(
         if (user.oauthProvider != null) {
             throw ChangePasswordIllegalStateException()
         }
-        if (newPassword.length < 8 || oldPassword == newPassword) {
+        if (newPassword.length < 8) {
             throw InvalidNewPasswordException()
         }
-        if (bcryptPasswordEncoder.matches(oldPassword, user.password).not()) {
+        if (!bcryptPasswordEncoder.matches(oldPassword, user.password)) {
             throw InvalidOldPasswordException()
+        }
+        if (oldPassword == newPassword) {
+            throw InvalidNewPasswordException()
         }
         user.password = bcryptPasswordEncoder.encode(newPassword)
         userRepository.save(user)

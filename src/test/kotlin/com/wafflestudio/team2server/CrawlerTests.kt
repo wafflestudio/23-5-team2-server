@@ -27,7 +27,7 @@ class CrawlerTests
         private lateinit var mysnuCrawlerService: MysnuCrawlerService
 
         @Test
-        fun `call crawler service`() {
+        fun `succeed on calling crawler service`() {
             given(mysnuCrawlerService.code).willReturn("mysnu")
 
             mvc

@@ -19,7 +19,7 @@ class GoogleOAuth2UserService(
         // 1. Get email from Google attributes
         val email = oAuth2User.getAttribute<String?>("email")
         if (email.isNullOrEmpty()) {
-            throw OAuth2AuthenticationException("Invalid email format")
+            throw OAuth2AuthenticationException("Email not provided by OAuth2 provider")
         }
 
         // 2. Database Check & Create

@@ -29,7 +29,7 @@ class AuthController(
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "회원가입 성공"),
-            ApiResponse(responseCode = "400", description = "잘못된 요청 (id 또는 password가 4자 미만)"),
+            ApiResponse(responseCode = "400", description = "잘못된 요청 (id가 4자 미만 또는 password가 8자 미만)"),
             ApiResponse(responseCode = "409", description = "이미 존재하는 id"),
         ],
     )

@@ -43,7 +43,7 @@ class AuthTests
 
         @Test
         fun `login successfully`() {
-            // 1. Given: Fix the password variable
+            // 1. Given: The password variable
             val rawPassword = "fixed-password-1234"
             val (user, _) = dataGenerator.generateUser(password = rawPassword)
 

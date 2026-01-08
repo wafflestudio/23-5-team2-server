@@ -73,6 +73,16 @@ class UserTests
                     status { isOk() }
                     cookie { exists("AUTH-TOKEN") }
                 }
+
+            // 4. Then: 기존 비밀번호로 로그인 시도 (401)
+            val loginRequest2 = LocalLoginRequest(userId = user.localId!!, password = oldPassword)
+            mvc
+                .post("/api/v1/auth/login/local") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(loginRequest2)
+                }.andExpect {
+                    status { isUnauthorized() }
+                }
         }
 
         @Test

@@ -1,8 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: test
-
   datasource:
     url: jdbc:tc:mysql:///${DB_NAME:mydatabase}
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
