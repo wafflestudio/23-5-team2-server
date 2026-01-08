@@ -29,6 +29,7 @@ app:
 jwt:
   secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-jwt-token-generation}
   expiration-in-ms: 86400000
+  secure: false
 
 # Actuator Health
 management:

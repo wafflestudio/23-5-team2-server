@@ -14,6 +14,7 @@ class JwtProvider(
     private val secretKey: String,
     @Value("\${jwt.expiration-in-ms}")
     private val expirationInMs: Long,
+    @Value("\${jwt.secure}") private val secure: Boolean,
 ) {
     private val key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
@@ -72,5 +73,6 @@ class JwtProvider(
             .path("/") // Available for all routes
             .maxAge((getExpiration(token) - System.currentTimeMillis()) / 1000)
             .sameSite("Lax")
+            .secure(secure)
             .build()
 }

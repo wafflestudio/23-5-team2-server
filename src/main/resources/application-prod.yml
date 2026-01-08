@@ -1,3 +1,6 @@
 app:
   frontend:
     url: https://d2sajtt7b5xbu6.cloudfront.net
+
+jwt:
+  secure: true

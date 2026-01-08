@@ -18,4 +18,10 @@ class User(
     var createdAt: Instant? = null,
     @LastModifiedDate
     var updatedAt: Instant? = null,
-)
+) {
+    init {
+        require(localId != null || oauthId != null) {
+            "User must have at least one authentication identifier: localId or oauthId"
+        }
+    }
+}

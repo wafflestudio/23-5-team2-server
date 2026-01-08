@@ -67,6 +67,9 @@ class AuthController(
         return ResponseEntity.ok().headers(headers).build()
     }
 
+    /**
+     * This clears `AUTH-TOKEN` cookie. This requires no authenticated user to improve performance.
+     */
     @PostMapping("/logout")
     fun logout(): ResponseEntity<Unit> {
         val cookie =

@@ -22,8 +22,11 @@ class OAuth2SuccessHandler(
         authentication: Authentication,
     ) {
         val oAuth2User = authentication.principal as OAuth2User
-        val email = oAuth2User.getAttribute<String?>("email")!!
-        val user = userRepository.findByOauthId(email)!!
+        val email =
+            oAuth2User.getAttribute<String?>(
+                "email",
+            ) ?: throw IllegalStateException("OAuth2 provider did not supply a non-null 'email' attribute")
+        val user = userRepository.findByOauthId(email) ?: throw IllegalStateException("User not found for OAuth id (email=$email)")
 
         val token = jwtProvider.createToken(user.id!!)
         val jwtCookie = jwtProvider.createJwtCookie(token)
