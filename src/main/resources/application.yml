@@ -5,6 +5,9 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  profiles:
+    active: local
+
   # Database Connection
   datasource:
     url: jdbc:mysql://localhost:3306/${DB_NAME:mydatabase}
@@ -25,9 +28,6 @@ spring:
 jwt:
   secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-jwt-token-generation}
   expiration-in-ms: 86400000
-app:
-  frontend:
-    url: http://localhost:5173
 
 # Actuator Health
 management:
