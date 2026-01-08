@@ -23,5 +23,8 @@ class User(
         require(localId != null || oauthId != null) {
             "User must have at least one authentication identifier: localId or oauthId"
         }
+        require(localId == null || password != null) {
+            "User must have password if they use local login"
+        }
     }
 }

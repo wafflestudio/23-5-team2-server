@@ -60,7 +60,7 @@ class UserTests
                     contentType = MediaType.APPLICATION_JSON
                     content = mapper.writeValueAsString(updateRequest)
                 }.andExpect {
-                    status { isNoContent() }
+                    status { isOk() }
                 }
 
             // 3. Then: 새 비밀번호로 로그인 시도 (200 OK)

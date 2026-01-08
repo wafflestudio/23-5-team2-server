@@ -25,5 +25,5 @@ class UserArgumentResolver(
         runCatching {
             val userId = webRequest.getAttribute("userId", 0) as Long
             userRepository.findById(userId)
-        }.getOrNull()?.get() ?: throw AuthenticateException()
+        }.getOrNull()?.orElseThrow { AuthenticateException() } ?: throw AuthenticateException()
 }

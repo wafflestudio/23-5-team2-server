@@ -70,6 +70,12 @@ class AuthController(
     /**
      * This clears `AUTH-TOKEN` cookie. This requires no authenticated user to improve performance.
      */
+    @Operation(summary = "로그아웃", description = "JWT 토큰을 저장하는 쿠키를 초기화합니다")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "로그아웃 성공, AUTH-TOKEN 쿠키 초기화"),
+        ],
+    )
     @PostMapping("/logout")
     fun logout(): ResponseEntity<Unit> {
         val cookie =

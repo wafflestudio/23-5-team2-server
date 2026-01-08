@@ -35,16 +35,29 @@ class UserController(
         @Parameter(hidden = true) @LoggedInUser user: User,
     ): ResponseEntity<UserDto> = ResponseEntity.ok(UserDto(user))
 
+    @Operation(summary = "비밀번호 변경", description = "로그인한 사용자의 비밀번호를 변경합니다")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "사용자 비밀번호 변경 성공"),
+            ApiResponse(responseCode = "400", description = "로컬 로그인 사용자가 아님 | 기존 비밀번호 틀림 | 잘못된 새 비밀번호"),
+        ],
+    )
     @PatchMapping("/me/local")
     fun updateLocal(
         @Parameter(hidden = true) @LoggedInUser user: User,
         @RequestBody updateLocalRequest: UpdateLocalRequest,
-    ): ResponseEntity<Unit> {
+    ): ResponseEntity<UserDto> {
         val (oldPassword, newPassword) = updateLocalRequest
-        userService.updateLocal(user, oldPassword, newPassword)
-        return ResponseEntity.noContent().build()
+        val updatedUser = userService.updateLocal(user, oldPassword, newPassword)
+        return ResponseEntity.ok(updatedUser)
     }
 
+    @Operation(summary = "사용자 삭제", description = "로그인한 사용자를 삭제합니다")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "204", description = "사용자 삭제 성공"),
+        ],
+    )
     @DeleteMapping("/me")
     fun deleteUser(
         @Parameter(hidden = true) @LoggedInUser user: User,

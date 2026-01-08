@@ -6,12 +6,14 @@
 루트 경로에 다음의 `.env` 파일을 작성합니다.
 
 ```env
-GOOGLE_CLIENT_SECRET=YOUR-GOOGLE-SECRET
+GOOGLE_CLIENT_ID=YOUR-GOOGLE-CLIENT-ID
+GOOGLE_CLIENT_SECRET=YOUR-GOOGLE-CLIENT-SECRET
 ```
 
-| Key Name                | Description             |
-|-------------------------|-------------------------|
-| `GOOGLE_CLIENT_SECRET`  | 구글 OAuth2 Client Secret |
+| Key Name               | Description              |
+|------------------------|--------------------------|
+| `GOOGLE_CLIENT_ID`     | 구글 OAuth2 Client ID      |
+| `GOOGLE_CLIENT_SECRET` | 구글 OAuth2 Client Secret  |
 
 # Auth
 

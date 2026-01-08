@@ -27,7 +27,7 @@ class UserService(
         if (localId.length < 4) {
             throw SignUpBadLocalIdException()
         }
-        if (password.length < 4) {
+        if (password.length < 8) {
             throw SignUpBadPasswordException()
         }
 
@@ -66,7 +66,7 @@ class UserService(
         if (user.oauthProvider != null) {
             throw ChangePasswordIllegalStateException()
         }
-        if (newPassword.length < 4 || oldPassword == newPassword) {
+        if (newPassword.length < 8 || oldPassword == newPassword) {
             throw InvalidNewPasswordException()
         }
         if (bcryptPasswordEncoder.matches(oldPassword, user.password).not()) {

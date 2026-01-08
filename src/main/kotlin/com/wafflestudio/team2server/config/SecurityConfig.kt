@@ -19,6 +19,9 @@ class SecurityConfig(
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        // it does not use authorizeHttpRequests
+        // requiring authorization is handled at the controller level
+        // when use @LoggedInUser, if there is no authorization, UserArgumentResolver will return 401.
         http
             .csrf { it.disable() }
             .httpBasic { it.disable() }
