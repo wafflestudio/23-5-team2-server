@@ -2,6 +2,7 @@ package com.wafflestudio.team2server.config
 
 import com.wafflestudio.team2server.user.OAuth2SuccessHandler
 import com.wafflestudio.team2server.user.service.GoogleOAuth2UserService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -14,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain
 class SecurityConfig(
     private val googleOAuth2UserService: GoogleOAuth2UserService,
     private val oAuth2SuccessHandler: OAuth2SuccessHandler,
+    @Value("\${app.frontend.url}") private val frontendUrl: String,
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -25,6 +27,7 @@ class SecurityConfig(
                 oauth2
                     .userInfoEndpoint { it.userService(googleOAuth2UserService) }
                     .successHandler(oAuth2SuccessHandler)
+                    .failureUrl(frontendUrl)
             }
         return http.build()
     }
