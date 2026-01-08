@@ -12,13 +12,11 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
+import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest
@@ -39,11 +37,12 @@ class UserTests
 
             // When & Then
             mvc
-                .perform(
-                    get("/api/v1/users/me")
-                        .cookie(Cookie("AUTH-TOKEN", token)), // 인증용 쿠키 주입
-                ).andExpect(status().isOk)
-                .andExpect(jsonPath("$.id").value(user.id))
+                .get("/api/v1/users/me") {
+                    cookie(Cookie("AUTH-TOKEN", token))
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.id").value(user.id)
+                }
         }
 
         @Test
@@ -56,22 +55,24 @@ class UserTests
             // 2. When: 비밀번호 변경 요청 (204 No Content)
             val updateRequest = UpdateLocalRequest(oldPassword, newPassword)
             mvc
-                .perform(
-                    patch("/api/v1/users/me/local")
-                        .cookie(Cookie("AUTH-TOKEN", token))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(updateRequest)),
-                ).andExpect(status().isNoContent)
+                .patch("/api/v1/users/me/local") {
+                    cookie(Cookie("AUTH-TOKEN", token))
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(updateRequest)
+                }.andExpect {
+                    status { isNoContent() }
+                }
 
             // 3. Then: 새 비밀번호로 로그인 시도 (200 OK)
             val loginRequest = LocalLoginRequest(userId = user.localId!!, password = newPassword)
             mvc
-                .perform(
-                    post("/api/v1/auth/login/local")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(loginRequest)),
-                ).andExpect(status().isOk)
-                .andExpect(cookie().exists("AUTH-TOKEN"))
+                .post("/api/v1/auth/login/local") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(loginRequest)
+                }.andExpect {
+                    status { isOk() }
+                    cookie { exists("AUTH-TOKEN") }
+                }
         }
 
         @Test
@@ -83,18 +84,20 @@ class UserTests
 
             // 2. When: 회원 탈퇴 요청 (204 No Content)
             mvc
-                .perform(
-                    delete("/api/v1/users/me")
-                        .cookie(Cookie("AUTH-TOKEN", token)),
-                ).andExpect(status().isNoContent)
+                .delete("/api/v1/users/me") {
+                    cookie(Cookie("AUTH-TOKEN", token))
+                }.andExpect {
+                    status { isNoContent() }
+                }
 
             // 3. Then: 탈퇴한 계정으로 로그인 시도 (401 Unauthorized)
             val loginRequest = LocalLoginRequest(userId = userId, password = password)
             mvc
-                .perform(
-                    post("/api/v1/auth/login/local")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(loginRequest)),
-                ).andExpect(status().isUnauthorized)
+                .post("/api/v1/auth/login/local") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(loginRequest)
+                }.andExpect {
+                    status { isUnauthorized() }
+                }
         }
     }

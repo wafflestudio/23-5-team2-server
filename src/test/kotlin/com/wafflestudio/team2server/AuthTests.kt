@@ -11,10 +11,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.post
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest
@@ -25,7 +22,7 @@ class AuthTests
     @Autowired
     constructor(
         private val mvc: MockMvc,
-        private val mapper: ObjectMapper,
+        private val objectMapper: ObjectMapper,
         private val dataGenerator: DataGenerator,
     ) {
         @Test
@@ -36,11 +33,12 @@ class AuthTests
 
             val request = LocalRegisterRequest(userId, password)
             mvc
-                .perform(
-                    post("/api/v1/auth/register/local")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON),
-                ).andExpect(status().isCreated)
+                .post("/api/v1/auth/register/local") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }.andExpect {
+                    status { isCreated() }
+                }
         }
 
         @Test
@@ -53,13 +51,15 @@ class AuthTests
 
             // When & Then
             mvc
-                .perform(
-                    post("/api/v1/auth/login/local")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isOk)
-                .andExpect(header().exists("Set-Cookie"))
-                .andExpect(cookie().exists("AUTH-TOKEN"))
+                .post("/api/v1/auth/login/local") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    header { exists("Set-Cookie") }
+                    cookie { exists("AUTH-TOKEN") }
+                }
         }
 
         @Test
@@ -72,21 +72,23 @@ class AuthTests
 
             // When & Then
             mvc
-                .perform(
-                    post("/api/v1/auth/login/local")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isUnauthorized)
+                .post("/api/v1/auth/login/local") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }.andExpect {
+                    status {
+                        isUnauthorized()
+                    }
+                }
         }
 
         @Test
         fun `logout returns 200 and clears cookie`() {
             // When & Then
-            mvc
-                .perform(
-                    post("/api/v1/auth/logout"),
-                ).andExpect(status().isOk)
-                .andExpect(header().exists("Set-Cookie"))
-                .andExpect(cookie().value("AUTH-TOKEN", ""))
+            mvc.post("/api/v1/auth/logout").andExpect {
+                status { isOk() }
+                header { exists("Set-Cookie") }
+                cookie { value("AUTH-TOKEN", "") }
+            }
         }
     }

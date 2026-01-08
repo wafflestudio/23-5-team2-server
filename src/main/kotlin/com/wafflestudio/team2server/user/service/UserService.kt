@@ -8,7 +8,6 @@ import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.SignUpBadLocalIdException
 import com.wafflestudio.team2server.user.SignUpBadPasswordException
 import com.wafflestudio.team2server.user.SignUpLocalIdConflictException
-import com.wafflestudio.team2server.user.SignUpOauthIdConflictException
 import com.wafflestudio.team2server.user.dto.core.UserDto
 import com.wafflestudio.team2server.user.model.User
 import com.wafflestudio.team2server.user.repository.UserRepository
@@ -44,14 +43,6 @@ class UserService(
                     password = encryptedPassword,
                 ),
             )
-        return UserDto(user)
-    }
-
-    fun registerGoogle(email: String): UserDto {
-        if (userRepository.existsByOauthId(email)) {
-            throw SignUpOauthIdConflictException()
-        }
-        val user = userRepository.save(User(oauthId = email, oauthProvider = "google"))
         return UserDto(user)
     }
 

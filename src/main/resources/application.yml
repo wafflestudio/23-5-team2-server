@@ -2,6 +2,9 @@ spring:
   application:
     name: 23-5-team2-server
 
+  config:
+    import: optional:file:.env[.properties]
+
   # Database Connection
   datasource:
     url: jdbc:mysql://localhost:3306/${DB_NAME:mydatabase}
@@ -14,11 +17,9 @@ spring:
     oauth2:
       client:
         registration:
-          config:
-            import: optional:file:.env[.properties]
           google:
             client-id: 932303076890-c7ucenrpg3co0pr5vkui62ufelpuclf2.apps.googleusercontent.com
-            client-secret: $GOOGLE_CLIENT_SECRET
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email
 
 jwt:
@@ -26,7 +27,7 @@ jwt:
   expiration-in-ms: 86400000
 app:
   frontend:
-    url: http://localhost:3000
+    url: http://localhost:5173
 
 # Actuator Health
 management:
