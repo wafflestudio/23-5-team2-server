@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
+import kotlin.random.Random
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -52,7 +53,7 @@ class CrawlerTests
         fun `get crawler status returns ok and correct body structure`() {
             val realEntity =
                 Crawler(
-                    boardId = 1L,
+                    boardId = Random.nextLong(11, 10000),
                     code = "TEST_CODE_01",
                     nextUpdateAt = Instant.now(),
                     updatedAt = Instant.now(),
