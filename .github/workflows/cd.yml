@@ -13,6 +13,8 @@ env:
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
   GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  AWS_S3_ACCESS_KEY: ${{ secrets.AWS_S3_ACCESS_KEY }}
+  AWS_S3_SECRET_KEY: ${{ secrets.AWS_S3_SECRET_KEY }}
 
 jobs:
   build-and-push:
@@ -74,7 +76,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: REGISTRY,IMAGE_NAME,DB_NAME,DB_USER,DB_PASSWORD,GITHUB_ACTOR,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,JWT_SECRET
+          envs: REGISTRY,IMAGE_NAME,DB_NAME,DB_USER,DB_PASSWORD,GITHUB_ACTOR,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,AWS_S3_ACCESS_KEY,AWS_S3_SECRET_KEY,JWT_SECRET
           script: |
             # Define the image string inside the script for safety
             IMAGE="${REGISTRY}/${IMAGE_NAME}:latest"
@@ -100,6 +102,8 @@ jobs:
               -e DB_PASSWORD="$DB_PASSWORD" \
               -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
               -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
+              -e AWS_S3_ACCESS_KEY="$AWS_S3_ACCESS_KEY" \
+              -e AWS_S3_SECRET_KEY="$AWS_S3_SECRET_KEY" \
               -e JWT_SECRET="$JWT_SECRET" \
               $IMAGE
             

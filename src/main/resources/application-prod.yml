@@ -4,3 +4,9 @@ app:
 
 jwt:
   secure: true
+
+# AWS S3
+cloud:
+  aws:
+    s3:
+      directory: prod/images

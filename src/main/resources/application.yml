@@ -42,3 +42,15 @@ management:
       probes:
         enabled: true
       show-details: never
+
+# AWS S3
+cloud:
+  aws:
+    s3:
+      bucket: waffle-snuboard-bucket
+      directory: local/images
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY}
+      secretKey: ${AWS_S3_SECRET_KEY}
