@@ -33,5 +33,5 @@ class CrawlerController(
     }
 
     @GetMapping
-    fun crawlerStatus(): List<CrawlerStatusResponse> = crawlerService.getAllCrawlerStatus()
+    fun getCrawlerStatus(): CrawlerStatusResponse = crawlerService.getAllCrawlerStatus()
 }

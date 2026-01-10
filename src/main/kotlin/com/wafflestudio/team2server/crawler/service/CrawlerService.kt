@@ -9,15 +9,22 @@ import java.time.Instant
 class CrawlerService(
     private val crawlerRepository: CrawlerRepository,
 ) {
-    fun getAllCrawlerStatus(): List<CrawlerStatusResponse> {
+    fun getAllCrawlerStatus(): CrawlerStatusResponse {
         val crawlers = crawlerRepository.findAll()
-        return crawlers.map { crawler ->
-            CrawlerStatusResponse(
-                id = crawler.id ?: 0L,
-                boardName = crawler.code,
-                lastUpdatedAt = crawler.updatedAt ?: Instant.now(),
-                nextUpdateAt = crawler.nextUpdateAt,
-            )
-        }
+
+        val crawlerInfos =
+            crawlers.map { crawler ->
+                CrawlerStatusResponse.CrawlerInfo(
+                    id = crawler.id ?: 0L,
+                    boardName = crawler.code,
+                    lastUpdatedAt = crawler.updatedAt ?: Instant.now(),
+                    nextUpdateAt = crawler.nextUpdateAt,
+                )
+            }
+
+        return CrawlerStatusResponse(
+            count = crawlerInfos.size,
+            results = crawlerInfos,
+        )
     }
 }

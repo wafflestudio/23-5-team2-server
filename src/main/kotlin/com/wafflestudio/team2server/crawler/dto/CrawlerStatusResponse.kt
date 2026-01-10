@@ -3,8 +3,13 @@ package com.wafflestudio.team2server.crawler.dto
 import java.time.Instant
 
 data class CrawlerStatusResponse(
-    val id: Long? = null,
-    val boardName: String? = null,
-    val lastUpdatedAt: Instant? = null,
-    val nextUpdateAt: Instant? = null,
-)
+    val count: Int,
+    val results: List<CrawlerInfo>,
+) {
+    data class CrawlerInfo(
+        val id: Long,
+        val boardName: String,
+        val lastUpdatedAt: Instant,
+        val nextUpdateAt: Instant,
+    )
+}
