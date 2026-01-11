@@ -51,7 +51,7 @@ abstract class BaseCrawler(
                 val rawLink = getPostLink(row)
                 val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
 
-                if (crawlerRepository.existsByOriginLink(detailUrl)) {
+                if (articleRepository.existsByOriginLink(detailUrl)) {
                     continue
                 }
 
