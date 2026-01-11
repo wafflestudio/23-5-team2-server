@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
 
 @RestController
+@RequestMapping("/api/v1")
 @Tag(name = "Article", description = "게시글 관리 API")
 class ArticleController(
     private val articleService: ArticleService,
@@ -35,7 +37,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없음"),
         ],
     )
-    @PostMapping("/api/v1/boards/{boardId}/articles")
+    @PostMapping("/boards/{boardId}/articles")
     fun create(
         @Parameter(
             description = "게시판 ID",
@@ -69,7 +71,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없음"),
         ],
     )
-    @GetMapping("/api/v1/boards/{boardId}/articles")
+    @GetMapping("/boards/{boardId}/articles")
     fun paging(
         @Parameter(description = "게시판 ID", example = "1")
         @PathVariable boardId: Long,
@@ -101,7 +103,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없습니다."),
         ],
     )
-    @GetMapping("/api/v1/articles/{articleId}")
+    @GetMapping("/articles/{articleId}")
     fun get(
         @Parameter(
             description = "게시글 ID",
@@ -120,7 +122,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없습니다."),
         ],
     )
-    @PatchMapping("/api/v1/articles/{articleId}")
+    @PatchMapping("/articles/{articleId}")
     fun update(
         @Parameter(
             description = "게시글 ID",
@@ -148,7 +150,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없습니다."),
         ],
     )
-    @DeleteMapping("/api/v1/articles/{articleId}")
+    @DeleteMapping("/articles/{articleId}")
     fun delete(
         @Parameter(
             description = "게시글 ID",
