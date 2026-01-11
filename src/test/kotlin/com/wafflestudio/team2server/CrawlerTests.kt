@@ -1,6 +1,5 @@
 package com.wafflestudio.team2server
 
-import com.wafflestudio.team2server.crawler.model.Crawler
 import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import com.wafflestudio.team2server.crawler.service.MysnuCrawlerService
 import org.junit.jupiter.api.Test
@@ -18,7 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.time.Instant
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -47,15 +45,6 @@ class CrawlerTests
 
         @Test
         fun `get crawler status returns ok and correct body structure`() {
-            val realEntity =
-                Crawler(
-                    boardId = 1L,
-                    code = "TEST_CODE_01",
-                    nextUpdateAt = Instant.now(),
-                    updatedAt = Instant.now(),
-                )
-
-            crawlerRepository.save(realEntity)
             mvc
                 .perform(
                     get("/api/crawlers"),
