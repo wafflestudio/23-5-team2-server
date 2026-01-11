@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebConfig(
     private val userArgumentResolver: UserArgumentResolver,
-    @Value("\${app.frontend.url}") private val frontendUrl: String,
+    @Value("\${app.frontend.url}") private val frontendUrl: List<String>,
 ) : WebMvcConfigurer {
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(userArgumentResolver)
@@ -19,7 +19,7 @@ class WebConfig(
     override fun addCorsMappings(registry: CorsRegistry) {
         registry
             .addMapping("/**")
-            .allowedOrigins(frontendUrl)
+            .allowedOrigins(*frontendUrl.toTypedArray())
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true)
