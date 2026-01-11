@@ -54,9 +54,3 @@ cloud:
     credentials:
       accessKey: ${AWS_S3_ACCESS_KEY}
       secretKey: ${AWS_S3_SECRET_KEY}
-
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    com.wafflestudio.team2server: DEBUG

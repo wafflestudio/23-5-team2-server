@@ -40,7 +40,6 @@ class HttpCookieOAuth2AuthorizationRequestRepository : AuthorizationRequestRepos
 
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest? {
         val cookie = request.cookies?.find { it.name == OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME }
-        println("DEBUG: Loading Request. Cookie present: ${cookie != null}")
         return cookie?.let { CookieUtils.deserialize(it, OAuth2AuthorizationRequest::class.java) }
     }
 
@@ -50,13 +49,9 @@ class HttpCookieOAuth2AuthorizationRequestRepository : AuthorizationRequestRepos
         response: HttpServletResponse,
     ) {
         if (authorizationRequest == null) {
-            println("DEBUG: Removing OAuth2 Cookies")
             deleteCookies(request, response)
             return
         }
-
-        val redirectUri = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME)
-        println("DEBUG: Saving Request. Target Redirect URI: $redirectUri")
 
         // 1. Save the actual OAuth2 Request (contains state, nonce, etc.)
         val authRequestCookie =
