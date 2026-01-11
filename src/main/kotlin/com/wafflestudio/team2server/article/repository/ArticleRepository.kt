@@ -63,6 +63,6 @@ interface ArticleRepository : ListCrudRepository<Article, Long> {
         @Param("nextId") nextId: Long?,
         @Param("limit") limit: Int,
     ): List<ArticleWithBoard>
-  
-  fun existsByOriginLink(originLink: String): Boolean
+
+    fun existsByOriginLink(originLink: String): Boolean
 }
