@@ -72,7 +72,7 @@ class JwtProvider(
             .httpOnly(true) // Prevents JS access (XSS protection)
             .path("/") // Available for all routes
             .maxAge((getExpiration(token) - System.currentTimeMillis()) / 1000)
-            .sameSite("Lax")
+            .sameSite("None")
             .secure(secure)
             .build()
 }
