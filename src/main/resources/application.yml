@@ -24,7 +24,7 @@ spring:
 
 app:
   frontend:
-    url: http://localhost:5173,https://d2sajtt7b5xbu6.cloudfront.net
+    url: http://localhost:5173,https://localhost:5173,https://d2sajtt7b5xbu6.cloudfront.net
 
 jwt:
   secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-jwt-token-generation}
