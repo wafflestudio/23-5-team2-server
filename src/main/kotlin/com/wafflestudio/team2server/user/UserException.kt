@@ -18,13 +18,6 @@ class SignUpLocalIdConflictException :
         msg = "User id conflict",
     )
 
-class SignUpOauthIdConflictException :
-    UserException(
-        errorCode = 0,
-        httpStatusCode = HttpStatus.CONFLICT,
-        msg = "User oauth2 id conflict",
-    )
-
 class SignUpBadLocalIdException :
     UserException(
         errorCode = 0,

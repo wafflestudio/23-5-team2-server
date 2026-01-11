@@ -27,7 +27,7 @@ class UserController(
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공"),
-            ApiResponse(responseCode = "401", description = "인증 실패 (유효하지 않은 토큰)"),
+            ApiResponse(responseCode = "401", description = "사용자 인증 실패 (유효하지 않은 토큰)"),
         ],
     )
     @GetMapping("/me")
@@ -40,6 +40,7 @@ class UserController(
         value = [
             ApiResponse(responseCode = "200", description = "사용자 비밀번호 변경 성공"),
             ApiResponse(responseCode = "400", description = "로컬 로그인 사용자가 아님 | 기존 비밀번호 틀림 | 잘못된 새 비밀번호"),
+            ApiResponse(responseCode = "401", description = "사용자 인증 실패 (유효하지 않은 토큰)"),
         ],
     )
     @PatchMapping("/me/local")
@@ -56,6 +57,7 @@ class UserController(
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "204", description = "사용자 삭제 성공"),
+            ApiResponse(responseCode = "401", description = "사용자 인증 실패 (유효하지 않은 토큰)"),
         ],
     )
     @DeleteMapping("/me")
