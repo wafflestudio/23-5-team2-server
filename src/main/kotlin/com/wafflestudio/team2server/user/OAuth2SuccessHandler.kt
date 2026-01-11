@@ -4,6 +4,7 @@ import com.wafflestudio.team2server.config.HttpCookieOAuth2AuthorizationRequestR
 import com.wafflestudio.team2server.user.repository.UserRepository
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.user.OAuth2User
@@ -15,6 +16,7 @@ class OAuth2SuccessHandler(
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
     private val cookieRepository: HttpCookieOAuth2AuthorizationRequestRepository,
+    @Value("\${app.frontend.url}") private val frontendUrl: List<String>,
 ) : SimpleUrlAuthenticationSuccessHandler() {
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
@@ -32,14 +34,17 @@ class OAuth2SuccessHandler(
         val jwtCookie = jwtProvider.createJwtCookie(token)
         response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString())
 
-        val targetUrl =
+        val rawTargetUrl =
             request.cookies
                 ?.find { it.name == HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME }
-                ?.value ?: "/"
+                ?.value
+        val targetUrl = if (rawTargetUrl != null && isValidRedirectUrl(rawTargetUrl)) rawTargetUrl else "/"
 
         // IMPORTANT: Clear the cookies used for the OAuth flow
         cookieRepository.deleteCookies(request, response)
 
         redirectStrategy.sendRedirect(request, response, targetUrl)
     }
+
+    private fun isValidRedirectUrl(url: String): Boolean = frontendUrl.find { url.startsWith(it) } != null
 }

@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import org.testcontainers.junit.jupiter.Testcontainers
-import kotlin.jvm.java
 
 @SpringBootTest
 @ActiveProfiles("test")

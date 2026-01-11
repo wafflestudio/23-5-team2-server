@@ -2,7 +2,7 @@ package com.wafflestudio.team2server.image.service
 
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.ObjectMetadata
-import com.wafflestudio.team2server.image.AWSS3FailedException
+import com.wafflestudio.team2server.image.AwsS3FailedException
 import com.wafflestudio.team2server.image.ImageDeletionForbiddenException
 import com.wafflestudio.team2server.image.ImageNotFoundException
 import com.wafflestudio.team2server.image.InvalidExtensionException
@@ -34,7 +34,11 @@ class ImageService(
         image: MultipartFile,
     ): ImageMetadataDto {
         val originalFilename = image.originalFilename ?: throw InvalidFilenameException()
-        val extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1)
+        val dotIndex = originalFilename.lastIndexOf(".")
+        if (dotIndex == -1 || dotIndex == originalFilename.length - 1) {
+            throw InvalidExtensionException()
+        }
+        val extension = originalFilename.substring(dotIndex + 1)
         if (!allowedExtensions.contains(extension)) {
             throw InvalidExtensionException()
         }
@@ -60,9 +64,8 @@ class ImageService(
                     ImageMetadata(authorId = authorId, url = url, originalFilename = originalFilename),
                 )
             return ImageMetadataDto(imageMetadata)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw AWSS3FailedException()
+        } catch (_: Exception) {
+            throw AwsS3FailedException()
         }
     }
 
@@ -80,9 +83,8 @@ class ImageService(
         try {
             amazonS3Client.deleteObject(bucket, fileName)
             imageMetadataRepository.delete(imageMetadata)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw AWSS3FailedException()
+        } catch (_: Exception) {
+            throw AwsS3FailedException()
         }
     }
 }

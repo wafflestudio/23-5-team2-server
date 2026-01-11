@@ -18,7 +18,7 @@
 
 ## Google OAuth2
 
-- `/oauth2/authorization/google?redirect_url=` 로 이동하면 구글 로그인 과정이 진행됩니다. 
+- `/oauth2/authorization/google?redirect_uri=` 로 이동하면 구글 로그인 과정이 진행됩니다. 
 - 로그인 성공 / 실패 모두 쿼리 파라미터로 설정한 URL로 리다이렉트됩니다. 
 
 # deploy

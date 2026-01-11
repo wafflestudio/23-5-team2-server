@@ -15,7 +15,7 @@ class InvalidFilenameException :
     ImageException(
         errorCode = 0,
         httpStatusCode = HttpStatus.BAD_REQUEST,
-        msg = "Filename is null",
+        msg = "Image filename is missing or null",
     )
 
 class InvalidExtensionException :
@@ -36,10 +36,10 @@ class InvalidFileSizeException :
     ImageException(
         errorCode = 0,
         httpStatusCode = HttpStatus.PAYLOAD_TOO_LARGE,
-        msg = "The file size is not allowed",
+        msg = "The file size exceeds the maximum allowed size",
     )
 
-class AWSS3FailedException :
+class AwsS3FailedException :
     ImageException(
         errorCode = 0,
         httpStatusCode = HttpStatus.INTERNAL_SERVER_ERROR,
