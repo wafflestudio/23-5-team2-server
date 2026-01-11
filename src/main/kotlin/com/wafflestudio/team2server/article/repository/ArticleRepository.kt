@@ -23,8 +23,8 @@ interface ArticleRepository : ListCrudRepository<Article, Long> {
         b.id                AS board_id,
         b.name              AS board_name,
         b.source_url        AS board_source_url
-    FROM article a
-    LEFT JOIN board b
+    FROM articles a
+    LEFT JOIN boards b
         ON a.board_id = b.id
     WHERE a.id = :articleId
     """,
@@ -48,8 +48,8 @@ interface ArticleRepository : ListCrudRepository<Article, Long> {
         b.id            AS board_id,
         b.name          AS board_name,
         b.source_url    AS board_source_url
-    FROM article a
-    LEFT JOIN board b
+    FROM articles a
+    LEFT JOIN boards b
         ON a.board_id = b.id
     WHERE a.board_id = :boardId
       AND (:nextPublishedAt IS NULL OR (a.published_at, a.id) < (:nextPublishedAt, :nextId))

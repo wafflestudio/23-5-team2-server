@@ -1,6 +1,6 @@
 package com.wafflestudio.team2server.article
 
-import com.wafflestudio.spring2025.DomainException
+import com.wafflestudio.team2server.DomainException
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 

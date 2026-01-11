@@ -104,16 +104,12 @@ class ArticleService(
         if (author?.isBlank() == true) {
             throw ArticleBlankAuthorException()
         }
-        if (publishedAt == null) {
-            throw ArticleBlankPublishedException()
-        }
         if (originLink?.isBlank() == true) {
             throw ArticleBlankOriginLinkException()
         }
         if (title?.isBlank() == true) {
             throw ArticleBlankTitleException()
         }
-
         val article = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         content?.let { article.content = it }
         author?.let { article.author = it }
