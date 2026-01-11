@@ -47,6 +47,7 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")

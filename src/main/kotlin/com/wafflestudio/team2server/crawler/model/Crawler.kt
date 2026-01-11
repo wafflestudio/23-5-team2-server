@@ -12,4 +12,5 @@ data class Crawler(
     val nextUpdateAt: Instant,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
+    val code: String,
 )
