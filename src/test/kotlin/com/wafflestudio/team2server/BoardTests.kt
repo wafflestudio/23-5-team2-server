@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.testcontainers.junit.jupiter.Testcontainers
 
@@ -21,7 +21,7 @@ class BoardTests
     ) {
         @Test
         fun `get boards returns ok and correct body structure`() {
-            mvc.post("/api/v1/boards").andExpect {
+            mvc.get("/api/v1/boards").andExpect {
                 status { isOk() }
                 jsonPath("$.boards").isArray
                 jsonPath("$.boards[0].name").isString

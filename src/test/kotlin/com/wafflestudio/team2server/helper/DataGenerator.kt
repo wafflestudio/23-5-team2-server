@@ -4,6 +4,8 @@ import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.board.model.Board
 import com.wafflestudio.team2server.board.repository.BoardRepository
+import com.wafflestudio.team2server.subscription.model.Subscription
+import com.wafflestudio.team2server.subscription.repository.SubscriptionRepository
 import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.model.User
 import com.wafflestudio.team2server.user.repository.UserRepository
@@ -20,6 +22,7 @@ class DataGenerator(
     private val bcryptPasswordEncoder: BCryptPasswordEncoder,
     private val boardRepository: BoardRepository,
     private val articleRepository: ArticleRepository,
+    private val subscriptionRepository: SubscriptionRepository,
 ) {
     fun generateUser(
         userId: String? = null,
@@ -70,4 +73,9 @@ class DataGenerator(
             )
         return article
     }
+
+    fun generateSubscription(
+        userId: Long,
+        boardId: Long,
+    ): Subscription = subscriptionRepository.save(Subscription(userId = userId, boardId = boardId))
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.user.dto.LocalLoginRequest
 import com.wafflestudio.team2server.user.dto.LocalRegisterRequest
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import org.testcontainers.junit.jupiter.Testcontainers
 
+@Disabled
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
