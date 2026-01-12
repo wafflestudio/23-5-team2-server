@@ -69,7 +69,7 @@ abstract class BaseCrawler(
         }
     }
 
-    private fun fetch(url: String): Document =
+    protected fun fetch(url: String): Document =
         Jsoup
             .connect(url)
             .userAgent("Mozilla/5.0 ...")
