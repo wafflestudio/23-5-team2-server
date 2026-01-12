@@ -1,17 +1,15 @@
-package com.wafflestudio.team2server.image.model
+package com.wafflestudio.team2server.subscription.model
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
-@Table("image_metadata")
-class ImageMetadata(
+@Table("subscriptions")
+class Subscription(
     @Id val id: Long? = null,
-    var authorId: Long? = null,
-    var articleId: Long? = null,
-    var url: String,
-    var originalFilename: String,
+    var userId: Long,
+    var boardId: Long,
     @CreatedDate
     var createdAt: Instant? = null,
 )

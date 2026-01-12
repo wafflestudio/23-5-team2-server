@@ -8,9 +8,9 @@ import java.time.Instant
 
 @Table("boards")
 class Board(
-    @Id var id: Long? = null,
+    @Id val id: Long? = null,
     var name: String,
-    var sourceUrl: String,
+    var sourceUrl: String? = null,
     @CreatedDate
     var createdAt: Instant? = null,
     @LastModifiedDate

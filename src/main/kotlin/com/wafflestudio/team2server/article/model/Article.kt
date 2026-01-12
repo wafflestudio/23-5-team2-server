@@ -9,7 +9,7 @@ import java.time.Instant
 @Table("articles")
 data class Article(
     @Id
-    var id: Long? = null,
+    val id: Long? = null,
     var boardId: Long,
     var content: String,
     var author: String,
