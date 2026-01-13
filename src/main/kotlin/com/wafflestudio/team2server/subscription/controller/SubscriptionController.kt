@@ -1,7 +1,6 @@
 package com.wafflestudio.team2server.subscription.controller
 
 import com.wafflestudio.team2server.subscription.dto.CreateSubscriptionRequest
-import com.wafflestudio.team2server.subscription.dto.DeleteSubscriptionRequest
 import com.wafflestudio.team2server.subscription.dto.SubscriptionsResponse
 import com.wafflestudio.team2server.subscription.dto.core.SubscriptionDto
 import com.wafflestudio.team2server.subscription.service.SubscriptionService
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -64,12 +64,12 @@ class SubscriptionController(
             ApiResponse(responseCode = "404", description = "사용자의 구독 목록에 해당 구독 기록이 없음"),
         ],
     )
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     fun deleteSubscription(
         @Parameter(hidden = true) @LoggedInUser user: User,
-        @RequestBody body: DeleteSubscriptionRequest,
+        @Parameter(hidden = true) @PathVariable id: Long,
     ): ResponseEntity<Unit> {
-        subscriptionService.deleteSubscription(user.id!!, body.subscriptionId)
+        subscriptionService.deleteSubscription(user.id!!, id)
         return ResponseEntity.noContent().build()
     }
 }

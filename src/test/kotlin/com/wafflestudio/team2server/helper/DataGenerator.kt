@@ -4,6 +4,8 @@ import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.board.model.Board
 import com.wafflestudio.team2server.board.repository.BoardRepository
+import com.wafflestudio.team2server.inboxes.model.Inbox
+import com.wafflestudio.team2server.inboxes.repository.InboxRepository
 import com.wafflestudio.team2server.subscription.model.Subscription
 import com.wafflestudio.team2server.subscription.repository.SubscriptionRepository
 import com.wafflestudio.team2server.user.JwtProvider
@@ -23,6 +25,7 @@ class DataGenerator(
     private val boardRepository: BoardRepository,
     private val articleRepository: ArticleRepository,
     private val subscriptionRepository: SubscriptionRepository,
+    private val inboxRepository: InboxRepository,
 ) {
     fun generateUser(
         userId: String? = null,
@@ -78,4 +81,12 @@ class DataGenerator(
         userId: Long,
         boardId: Long,
     ): Subscription = subscriptionRepository.save(Subscription(userId = userId, boardId = boardId))
+
+    fun generateInbox(
+        userId: Long,
+        articleTitle: String?,
+    ): Inbox {
+        val article = generateArticle(title = articleTitle)
+        return inboxRepository.save(Inbox(userId = userId, articleId = article.id!!))
+    }
 }

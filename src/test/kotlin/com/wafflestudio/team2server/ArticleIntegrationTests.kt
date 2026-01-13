@@ -29,7 +29,7 @@ import java.time.Instant
 @ActiveProfiles("test")
 @Testcontainers
 @AutoConfigureMockMvc
-class ArticleIntegrationTest
+class ArticleIntegrationTests
     @Autowired
     constructor(
         private val dataGenerator: DataGenerator,

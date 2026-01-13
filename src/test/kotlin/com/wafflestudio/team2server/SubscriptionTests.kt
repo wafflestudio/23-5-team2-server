@@ -3,7 +3,6 @@ package com.wafflestudio.team2server
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.subscription.dto.CreateSubscriptionRequest
-import com.wafflestudio.team2server.subscription.dto.DeleteSubscriptionRequest
 import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -75,25 +74,18 @@ class SubscriptionTests
             val (_, token2) = dataGenerator.generateUser()
             val subscription = dataGenerator.generateSubscription(user.id!!, 1L)
 
-            // Assuming subscription.id is what the delete request requires
-            val deleteRequest = DeleteSubscriptionRequest(subscriptionId = subscription.id!!)
-
             // When: Delete the subscription with another user
             mvc
-                .delete("/api/v1/subscriptions") {
+                .delete("/api/v1/subscriptions/${subscription.id!!}") {
                     cookie(Cookie("AUTH-TOKEN", token2))
-                    contentType = MediaType.APPLICATION_JSON
-                    content = mapper.writeValueAsString(deleteRequest)
                 }.andExpect {
                     status { isNotFound() }
                 }
 
             // When: Delete the subscription
             mvc
-                .delete("/api/v1/subscriptions") {
+                .delete("/api/v1/subscriptions/${subscription.id}") {
                     cookie(Cookie("AUTH-TOKEN", token))
-                    contentType = MediaType.APPLICATION_JSON
-                    content = mapper.writeValueAsString(deleteRequest)
                 }.andExpect {
                     status { isNoContent() }
                 }
