@@ -1,7 +1,7 @@
 package com.wafflestudio.team2server.helper
 
 import com.wafflestudio.team2server.article.model.Article
-import com.wafflestudio.team2server.article.repository.ArticleRepository
+import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.board.model.Board
 import com.wafflestudio.team2server.board.repository.BoardRepository
 import com.wafflestudio.team2server.inboxes.model.Inbox
@@ -23,7 +23,7 @@ class DataGenerator(
     private val jwtProvider: JwtProvider,
     private val bcryptPasswordEncoder: BCryptPasswordEncoder,
     private val boardRepository: BoardRepository,
-    private val articleRepository: ArticleRepository,
+    private val articleService: ArticleService,
     private val subscriptionRepository: SubscriptionRepository,
     private val inboxRepository: InboxRepository,
 ) {
@@ -64,7 +64,7 @@ class DataGenerator(
         orginalLink: String? = null,
     ): Article {
         val article =
-            articleRepository.save(
+            articleService.saveNewArticle(
                 Article(
                     title = title ?: "article-${Random.nextInt(1000000)}",
                     content = content ?: "content-${Random.nextInt(1000000)}",

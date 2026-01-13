@@ -2,6 +2,7 @@ package com.wafflestudio.team2server.crawler
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.repository.ArticleRepository
+import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -11,6 +12,7 @@ import java.time.Instant
 abstract class BaseCrawler(
     private val crawlerRepository: CrawlerRepository,
     private val articleRepository: ArticleRepository,
+    private val articleService: ArticleService,
 ) {
     abstract val listUrl: String
     abstract val baseUrl: String
@@ -61,11 +63,11 @@ abstract class BaseCrawler(
 
                 val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
 
-                articleRepository.save(article)
+                articleService.saveNewArticle(article)
 
                 Thread.sleep(500)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -81,7 +83,7 @@ abstract class BaseCrawler(
             val now = Instant.now()
             val next = now.plusSeconds(crawlIntervalSeconds)
             crawlerRepository.updateLastCrawledAt(targetBoardId, now, next)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 }

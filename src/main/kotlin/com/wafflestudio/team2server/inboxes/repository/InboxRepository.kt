@@ -2,9 +2,11 @@ package com.wafflestudio.team2server.inboxes.repository
 
 import com.wafflestudio.team2server.inboxes.model.Inbox
 import com.wafflestudio.team2server.inboxes.model.InboxWithArticle
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.ListCrudRepository
 import org.springframework.data.repository.query.Param
+import org.springframework.transaction.annotation.Transactional
 
 interface InboxRepository : ListCrudRepository<Inbox, Long> {
     @Query(
@@ -48,4 +50,19 @@ interface InboxRepository : ListCrudRepository<Inbox, Long> {
         id: Long,
         userId: Long,
     ): Inbox?
+
+    @Modifying
+    @Transactional
+    @Query(
+        value = """
+        INSERT INTO inboxes (user_id, article_id)
+        SELECT s.user_id, :articleId
+        FROM subscriptions s
+        WHERE s.board_id = :boardId
+    """,
+    )
+    fun createInboxesForBoardSubscribers(
+        @Param("articleId") articleId: Long,
+        @Param("boardId") boardId: Long,
+    ): Int
 }

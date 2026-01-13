@@ -1,5 +1,6 @@
 package com.wafflestudio.team2server.inboxes.service
 
+import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.inboxes.InboxNotFoundException
 import com.wafflestudio.team2server.inboxes.dto.InboxPaging
 import com.wafflestudio.team2server.inboxes.dto.InboxPagingResponse
@@ -42,4 +43,7 @@ class InboxService(
         val inbox = inboxRepository.findByIdAndUserId(inboxId, userId) ?: throw InboxNotFoundException()
         inboxRepository.delete(inbox)
     }
+
+    fun createInboxesForBoardSubscribers(article: Article): Int =
+        inboxRepository.createInboxesForBoardSubscribers(article.id!!, article.boardId)
 }

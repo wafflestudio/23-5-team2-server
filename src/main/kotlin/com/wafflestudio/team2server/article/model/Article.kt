@@ -1,13 +1,13 @@
 package com.wafflestudio.team2server.article.model
-
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.AbstractAggregateRoot
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("articles")
-data class Article(
+class Article(
     @Id
     val id: Long? = null,
     var boardId: Long,
@@ -20,4 +20,15 @@ data class Article(
     var createdAt: Instant? = null,
     @LastModifiedDate
     var updatedAt: Instant? = null,
+) : AbstractAggregateRoot<Article>() {
+    // Call this method before saving to trigger the event
+    fun publishCreatedEvent(): Article {
+        this.registerEvent(ArticleCreatedEvent(this))
+        return this
+    }
+}
+
+// Define the event record
+data class ArticleCreatedEvent(
+    val article: Article,
 )

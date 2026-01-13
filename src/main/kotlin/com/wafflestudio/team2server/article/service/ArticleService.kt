@@ -77,7 +77,7 @@ class ArticleService(
         val board = boardRepository.findByIdOrNull(boardId) ?: throw BoardNotFoundException()
 
         val article =
-            articleRepository.save(
+            saveNewArticle(
                 Article(
                     boardId = board.id!!,
                     content = content,
@@ -116,7 +116,7 @@ class ArticleService(
         originLink?.let { article.originLink = it }
         publishedAt?.let { article.publishedAt = it }
         title?.let { article.title = it }
-        articleRepository.save(article)
+        saveNewArticle(article)
         val articleWithBoard = articleRepository.findByIdWithBoard(articleId) ?: throw ArticleNotFoundException()
         return ArticleDto(articleWithBoard)
     }
@@ -124,6 +124,7 @@ class ArticleService(
     fun delete(articleId: Long) {
         val article = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         articleRepository.delete(article)
-        // 삭제시 기사 포린키로 갖고 있는 개체들 삭제 되었는지 확인 필요(나중에 개발시)
     }
+
+    fun saveNewArticle(article: Article): Article = articleRepository.save(article).publishCreatedEvent()
 }

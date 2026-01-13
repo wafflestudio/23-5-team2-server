@@ -65,4 +65,6 @@ interface ArticleRepository : ListCrudRepository<Article, Long> {
     ): List<ArticleWithBoard>
 
     fun existsByOriginLink(originLink: String): Boolean
+
+    // Do not use save directly. Instead, use ArticleService.saveNewArticle. It triggers ArticleCreatedEvent and the inbox adding logic.
 }

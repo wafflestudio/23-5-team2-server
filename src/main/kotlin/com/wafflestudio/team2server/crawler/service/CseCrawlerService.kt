@@ -2,6 +2,7 @@ package com.wafflestudio.team2server.crawler.service
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.repository.ArticleRepository
+import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.crawler.BaseCrawler
 import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import org.jsoup.nodes.Document
@@ -15,9 +16,10 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class CseCrawlerService(
-    private val crawlerRepository: CrawlerRepository,
+    crawlerRepository: CrawlerRepository,
     private val articleRepository: ArticleRepository,
-) : BaseCrawler(crawlerRepository, articleRepository) {
+    private val articleService: ArticleService,
+) : BaseCrawler(crawlerRepository, articleRepository, articleService) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     override val listUrl = "https://cse.snu.ac.kr/community/notice"
@@ -67,7 +69,7 @@ class CseCrawlerService(
                         val detailDoc = fetch(detailUrl)
 
                         val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
-                        articleRepository.save(article)
+                        articleService.saveNewArticle(article)
                     }
 
                     collectedCount++
@@ -141,7 +143,7 @@ class CseCrawlerService(
                 } else {
                     java.time.Instant.now()
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 java.time.Instant.now()
             }
 
