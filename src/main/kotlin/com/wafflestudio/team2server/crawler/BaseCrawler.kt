@@ -51,7 +51,7 @@ abstract class BaseCrawler(
                 val rawLink = getPostLink(row)
                 val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
 
-                if (crawlerRepository.existsByOriginLink(detailUrl)) {
+                if (articleRepository.existsByOriginLink(detailUrl)) {
                     continue
                 }
 
@@ -69,7 +69,7 @@ abstract class BaseCrawler(
         }
     }
 
-    private fun fetch(url: String): Document =
+    protected fun fetch(url: String): Document =
         Jsoup
             .connect(url)
             .userAgent("Mozilla/5.0 ...")

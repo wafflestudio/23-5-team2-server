@@ -52,7 +52,6 @@ class DataGenerator(
     fun generateArticle(
         title: String? = null,
         content: String? = null,
-        board: Board? = null,
         publishedAt: Instant = Instant.now(),
         author: String? = null,
         orginalLink: String? = null,
@@ -65,7 +64,7 @@ class DataGenerator(
                     author = author ?: "author-${Random.nextInt(1000000)}",
                     publishedAt = publishedAt,
                     originLink = orginalLink ?: "https://example.com/${UUID.randomUUID()}",
-                    boardId = (board ?: generateBoard()).id!!,
+                    boardId = 1,
                 ),
             )
         return article
