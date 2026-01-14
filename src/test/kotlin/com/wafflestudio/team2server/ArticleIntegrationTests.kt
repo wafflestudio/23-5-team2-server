@@ -6,10 +6,14 @@ import com.wafflestudio.team2server.article.dto.core.ArticleDto
 import com.wafflestudio.team2server.article.dto.request.CreateArticleRequest
 import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.model.Article
+import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.article.service.ArticleService
+import com.wafflestudio.team2server.board.model.Board
+import com.wafflestudio.team2server.board.repository.BoardRepository
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.helper.QueryCounter
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +40,25 @@ class ArticleIntegrationTests
         private val mvc: MockMvc,
         private val mapper: ObjectMapper,
         private val articleService: ArticleService,
+        private val boardRepository: BoardRepository,
+        private val articleRepository: ArticleRepository,
     ) {
+        @BeforeEach
+        fun setup() {
+            boardRepository.save(
+                Board(
+                    id = 1L,
+                    name = "Service Notice",
+                    sourceUrl = "https://example.com",
+                ),
+            )
+        }
+
+        @BeforeEach
+        fun cleanDummyBoardArticles() {
+            articleRepository.deleteAllByBoardId(1L)
+        }
+
         @Test
         fun `should create a article`() {
             // given
