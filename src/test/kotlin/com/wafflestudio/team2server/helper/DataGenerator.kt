@@ -35,20 +35,6 @@ class DataGenerator(
         return user to jwtProvider.createToken(user.id!!)
     }
 
-    fun generateBoard(
-        name: String? = null,
-        sorceUrl: String? = null,
-    ): Board {
-        val board =
-            boardRepository.save(
-                Board(
-                    name = name ?: "board-${Random.nextInt(1000000)}",
-                    sourceUrl = sorceUrl ?: "https://example.com/${UUID.randomUUID()}",
-                ),
-            )
-        return board
-    }
-
     fun generateArticle(
         title: String? = null,
         content: String? = null,
