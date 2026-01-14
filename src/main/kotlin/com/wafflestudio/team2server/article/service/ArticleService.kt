@@ -66,7 +66,6 @@ class ArticleService(
             pageArticles.map { ArticleDto(it) },
             ArticlePaging(newNextPublishedAt?.toEpochMilli(), newNextId, hasNext),
         )
-
     }
 
     fun create(
