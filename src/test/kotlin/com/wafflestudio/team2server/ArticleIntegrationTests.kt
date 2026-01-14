@@ -40,25 +40,7 @@ class ArticleIntegrationTests
         private val mvc: MockMvc,
         private val mapper: ObjectMapper,
         private val articleService: ArticleService,
-        private val boardRepository: BoardRepository,
-        private val articleRepository: ArticleRepository,
     ) {
-        @BeforeEach
-        fun setup() {
-            boardRepository.save(
-                Board(
-                    id = 1L,
-                    name = "Service Notice",
-                    sourceUrl = "https://example.com",
-                ),
-            )
-        }
-
-        @BeforeEach
-        fun cleanDummyBoardArticles() {
-            articleRepository.deleteAllByBoardId(1L)
-        }
-
         @Test
         fun `should create a article`() {
             // given
@@ -211,7 +193,7 @@ class ArticleIntegrationTests
                         mapper.readValue(it, ArticlePagingResponse::class.java)
                     }
             assertArticlesAreSorted(response.data)
-            assertArticleAreInBoard(response.data)
+            assertArticlesAreInBoard(response.data)
 
             val nextResponse =
                 mvc
@@ -230,7 +212,7 @@ class ArticleIntegrationTests
                     .getContentAsString(Charsets.UTF_8)
                     .let { mapper.readValue(it, ArticlePagingResponse::class.java) }
             assertArticlesAreSorted(nextResponse.data)
-            assertArticleAreInBoard(nextResponse.data)
+            assertArticlesAreInBoard(nextResponse.data)
             assertTrue((response.data.map { it.id } + nextResponse.data.map { it.id }).toSet().size == 30)
         }
 
@@ -243,7 +225,7 @@ class ArticleIntegrationTests
                     dataGenerator.generateArticle()
                 }
             val response =
-                queryCounter.assertQueryCount(2) {
+                queryCounter.assertQueryCount(1) {
                     mvc
                         .perform(
                             MockMvcRequestBuilders
@@ -304,7 +286,7 @@ class ArticleIntegrationTests
             }
         }
 
-        private fun assertArticleAreInBoard(articles: List<ArticleDto>) {
+        private fun assertArticlesAreInBoard(articles: List<ArticleDto>) {
             articles.forEach {
                 assertTrue(it.board.id == 1L)
             }

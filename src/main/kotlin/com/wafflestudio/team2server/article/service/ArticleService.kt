@@ -37,29 +37,19 @@ class ArticleService(
         nextId: Long?,
         limit: Int,
     ): ArticlePagingResponse {
-        val allowed = setOf(1L, 2L, 3L, 4L, 5L)
         val keyword = keyword?.trim()?.takeIf { it.isNotEmpty() }
-
-        if (boardIds != null && boardIds.any { it !in allowed }) {
-            throw BoardNotFoundException()
-        }
 
         val candidateBoardIds =
             boardIds
                 ?.distinct()
                 ?.takeIf { it.isNotEmpty() }
-                ?: allowed.toList()
-
-        val existingBoardIds = boardRepository.findExistingIds(candidateBoardIds).filterNotNull()
-
-        if (existingBoardIds.isEmpty()) {
-            throw BoardNotFoundException()
-        }
+                ?: listOf(2L, 3L, 4L, 5L)
 
         val queryLimit = limit + 1
+
         val articleWithBoards =
             articleRepository.findByBoardIdsWithCursor(
-                existingBoardIds,
+                candidateBoardIds,
                 keyword,
                 nextPublishedAt,
                 nextId,
@@ -76,6 +66,7 @@ class ArticleService(
             pageArticles.map { ArticleDto(it) },
             ArticlePaging(newNextPublishedAt?.toEpochMilli(), newNextId, hasNext),
         )
+
     }
 
     fun create(
