@@ -74,10 +74,12 @@ class ArticleController(
     @GetMapping("/articles")
     fun paging(
         @Parameter(
-            description = "게시판 ID", example = "2,3",
-            )@RequestParam(value = "boardIds", required = false) boardIds: String?,
+            description = "게시판 ID",
+            example = "2,3",
+        )@RequestParam(value = "boardIds", required = false) boardIds: String?,
         @Parameter(
-            description = "키워드 필터", example = "장학",
+            description = "키워드 필터",
+            example = "장학",
         )@RequestParam(value = "keyword", required = false) keyword: String?,
         @Parameter(
             description = "다음 페이지 커서 - 이전 응답의 마지막 게시글 생성 시간 (Unix timestamp, milliseconds)",

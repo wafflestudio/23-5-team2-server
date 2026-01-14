@@ -2,7 +2,6 @@ package com.wafflestudio.team2server.helper
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.repository.ArticleRepository
-import com.wafflestudio.team2server.board.model.Board
 import com.wafflestudio.team2server.board.repository.BoardRepository
 import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.model.User

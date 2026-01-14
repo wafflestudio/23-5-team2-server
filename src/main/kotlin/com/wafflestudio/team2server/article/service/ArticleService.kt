@@ -37,8 +37,7 @@ class ArticleService(
         nextId: Long?,
         limit: Int,
     ): ArticlePagingResponse {
-
-        val allowed = setOf(1L,2L, 3L, 4L, 5L)
+        val allowed = setOf(1L, 2L, 3L, 4L, 5L)
         val keyword = keyword?.trim()?.takeIf { it.isNotEmpty() }
 
         if (boardIds != null && boardIds.any { it !in allowed }) {
@@ -78,7 +77,6 @@ class ArticleService(
             ArticlePaging(newNextPublishedAt?.toEpochMilli(), newNextId, hasNext),
         )
     }
-
 
     fun create(
         content: String,

@@ -60,7 +60,7 @@ WHERE a.board_id IN (:boardIds)
   AND (:nextPublishedAt IS NULL OR (a.published_at, a.id) < (:nextPublishedAt, :nextId))
 ORDER BY a.published_at DESC, a.id DESC
 LIMIT :limit
-"""
+""",
     )
     fun findByBoardIdsWithCursor(
         @Param("boardIds") boardIds: List<Long>,
@@ -71,6 +71,6 @@ LIMIT :limit
     ): List<ArticleWithBoard>
 
     fun existsByOriginLink(originLink: String): Boolean
-    fun deleteAllByBoardId(boardId: Long)
 
+    fun deleteAllByBoardId(boardId: Long)
 }
