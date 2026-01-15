@@ -37,12 +37,8 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없음"),
         ],
     )
-    @PostMapping("/boards/{boardId}/articles")
+    @PostMapping("/boards/1/articles")
     fun create(
-        @Parameter(
-            description = "게시판 ID",
-            example = "1",
-        ) @PathVariable boardId: Long,
         @RequestBody createArticleRequest: CreateArticleRequest,
     ): ResponseEntity<CreateArticleResponse> {
         val articleDto =
@@ -52,7 +48,7 @@ class ArticleController(
                 author = createArticleRequest.author,
                 originLink = createArticleRequest.originLink,
                 publihedAt = createArticleRequest.publishedAt,
-                boardId = boardId,
+                boardId = 1,
             )
         return ResponseEntity.ok(articleDto)
     }
