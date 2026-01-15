@@ -161,6 +161,6 @@ class CseCrawlerService(
 
     @Scheduled(fixedRate = 3600000)
     fun runScheduled() {
-        crawl()
+//        crawl()
     }
 }

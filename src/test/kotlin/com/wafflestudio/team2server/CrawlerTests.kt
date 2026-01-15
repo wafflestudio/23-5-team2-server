@@ -1,6 +1,5 @@
 package com.wafflestudio.team2server
 
-import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import com.wafflestudio.team2server.crawler.service.CareerCrawlerService
 import com.wafflestudio.team2server.crawler.service.CseCrawlerService
 import com.wafflestudio.team2server.crawler.service.MysnuCrawlerService

@@ -26,9 +26,9 @@ data class CreateArticleRequest(
     @Schema(
         description = "원문 기사 링크",
         example = "https://www.mysnu/...",
-        required = true,
+        required = false,
     )
-    val originLink: String,
+    val originLink: String?,
     @Schema(
         description = "기사 실제 게시 시각",
         example = "2026-01-01T12:00:00Z",

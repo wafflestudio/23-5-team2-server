@@ -10,9 +10,11 @@ import com.wafflestudio.team2server.article.dto.ArticlePaging
 import com.wafflestudio.team2server.article.dto.core.ArticleDto
 import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.model.Article
+import com.wafflestudio.team2server.article.model.ArticleCreatedEvent
 import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.board.BoardNotFoundException
 import com.wafflestudio.team2server.board.repository.BoardRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -21,6 +23,7 @@ import java.time.Instant
 class ArticleService(
     private val articleRepository: ArticleRepository,
     private val boardRepository: BoardRepository,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     fun get(articleId: Long): ArticleDto {
         val articleWithBoard =
@@ -74,10 +77,10 @@ class ArticleService(
     fun create(
         content: String,
         author: String,
-        originLink: String,
+        originLink: String?,
         title: String,
         boardId: Long,
-        publihedAt: Instant?,
+        publishedAt: Instant?,
     ): ArticleDto {
         if (content.isBlank()) {
             throw ArticleBlankContentException()
@@ -85,10 +88,10 @@ class ArticleService(
         if (author.isBlank()) {
             throw ArticleBlankAuthorException()
         }
-        if (publihedAt == null) {
+        if (publishedAt == null) {
             throw ArticleBlankPublishedException()
         }
-        if (originLink.isBlank()) {
+        if (originLink != null && originLink.isBlank()) {
             throw ArticleBlankOriginLinkException()
         }
         if (title.isBlank()) {
@@ -104,7 +107,7 @@ class ArticleService(
                     author = author,
                     originLink = originLink,
                     title = title,
-                    publishedAt = publihedAt,
+                    publishedAt = publishedAt,
                 ),
             )
         return ArticleDto(article, board)
@@ -146,5 +149,9 @@ class ArticleService(
         articleRepository.delete(article)
     }
 
-    fun saveNewArticle(article: Article): Article = articleRepository.save(article).publishCreatedEvent()
+    fun saveNewArticle(article: Article): Article {
+        val savedArticle = articleRepository.save(article)
+        eventPublisher.publishEvent(ArticleCreatedEvent(savedArticle))
+        return savedArticle
+    }
 }

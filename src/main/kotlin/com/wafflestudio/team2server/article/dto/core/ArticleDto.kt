@@ -11,7 +11,7 @@ data class ArticleDto(
     val board: BoardDto,
     val content: String,
     val author: String,
-    val originLink: String,
+    val originLink: String?,
     val title: String,
     val publishedAt: Instant,
     val createdAt: Instant,

@@ -12,9 +12,11 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.multipart
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest
@@ -45,13 +47,13 @@ class ImageTests
             // 2. When: Upload Image
             val uploadResult =
                 mvc
-                    .multipart("/api/v1/images") {
-                        file(mockFile)
-                        cookie(Cookie("AUTH-TOKEN", token))
-                    }.andExpect {
-                        status { isCreated() }
-                        jsonPath("$.url") { exists() }
-                    }.andReturn()
+                    .perform(
+                        multipart("/api/v1/images")
+                            .file(mockFile)
+                            .cookie(Cookie("AUTH-TOKEN", token)),
+                    ).andExpect(status().isCreated)
+                    .andExpect(jsonPath("$.url").exists())
+                    .andReturn()
 
             val responseBody = uploadResult.response.contentAsString
             val createdImage = mapper.readValue(responseBody, CreateImageResponse::class.java)
@@ -59,29 +61,26 @@ class ImageTests
 
             // 3. When: User 2 tries to delete User 1's image
             mvc
-                .delete("/api/v1/images") {
-                    param("url", imageUrl)
-                    cookie(Cookie("AUTH-TOKEN", token2)) // User 2's token
-                }.andExpect {
-                    status { isForbidden() } // Should return 403
-                }
+                .perform(
+                    delete("/api/v1/images")
+                        .param("url", imageUrl)
+                        .cookie(Cookie("AUTH-TOKEN", token2)),
+                ).andExpect(status().isForbidden)
 
             // 4. When: Delete the image
             mvc
-                .delete("/api/v1/images") {
-                    param("url", imageUrl)
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isNoContent() }
-                }
+                .perform(
+                    delete("/api/v1/images")
+                        .param("url", imageUrl)
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isNoContent)
 
             // 5. Then: Fetching the URL again should fail (404)
             mvc
-                .get(imageUrl) {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isNotFound() }
-                }
+                .perform(
+                    get(imageUrl)
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isNotFound)
         }
 
         @Test
@@ -97,10 +96,9 @@ class ImageTests
 
             // When & Then: No Cookie provided
             mvc
-                .multipart("/api/v1/images") {
-                    file(mockFile)
-                }.andExpect {
-                    status { isUnauthorized() }
-                }
+                .perform(
+                    multipart("/api/v1/images")
+                        .file(mockFile),
+                ).andExpect(status().isUnauthorized)
         }
     }

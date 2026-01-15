@@ -5,6 +5,7 @@ import com.wafflestudio.team2server.article.dto.request.CreateArticleRequest
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.inboxes.dto.InboxPagingResponse
 import jakarta.servlet.http.Cookie
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,10 +13,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -41,33 +42,36 @@ class InboxTests
             val inbox3 = dataGenerator.generateInbox(user.id, "Message 3") // Newest
 
             // 2. When: Request first page with limit 2
-            val res =
+            val mvcResult =
                 mvc
-                    .get("/api/v1/inboxes?limit=2") {
-                        cookie(Cookie("AUTH-TOKEN", token))
-                    }.andExpect {
-                        status { isOk() }
-                        jsonPath("$.inboxes.length()").value(2)
-                        jsonPath("$.inboxes[0].id").value(inbox3.id)
-                        jsonPath("$.inboxes[1].id").value(inbox2.id)
-                        jsonPath("$.paging.hasNext").value(true)
-                    }.andReturn()
-                    .response
-                    .getContentAsString(Charsets.UTF_8)
-                    .let {
-                        mapper.readValue(it, InboxPagingResponse::class.java)
-                    }
+                    .perform(
+                        get("/api/v1/inboxes")
+                            .param("limit", "2")
+                            .cookie(Cookie("AUTH-TOKEN", token)),
+                    ).andExpect(status().isOk)
+                    .andExpect(jsonPath("$.inboxes", hasSize<Any>(2)))
+                    .andExpect(jsonPath("$.inboxes[0].id").value(inbox3.id))
+                    .andExpect(jsonPath("$.inboxes[1].id").value(inbox2.id))
+                    .andExpect(jsonPath("$.paging.hasNext").value(true))
+                    .andReturn()
+
+            val res =
+                mapper.readValue(
+                    mvcResult.response.getContentAsString(Charsets.UTF_8),
+                    InboxPagingResponse::class.java,
+                )
 
             // 3. When: Request second page using the ID of the last item from page 1 as nextId
             mvc
-                .get("/api/v1/inboxes?nextId=${res.paging.nextId}&limit=2") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.inboxes.length()").value(1)
-                    jsonPath("$.inboxes[0].id").value(inbox1.id)
-                    jsonPath("$.paging.hasNext").value(false)
-                }
+                .perform(
+                    get("/api/v1/inboxes")
+                        .param("nextId", res.paging.nextId.toString())
+                        .param("limit", "2")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.inboxes", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.inboxes[0].id").value(inbox1.id))
+                .andExpect(jsonPath("$.paging.hasNext").value(false))
         }
 
         @Test
@@ -77,22 +81,20 @@ class InboxTests
             val inbox = dataGenerator.generateInbox(user.id!!, "Unread Message")
             val inboxId = inbox.id!!
 
-            // When
+            // When: Mark as Read
             mvc
-                .patch("/api/v1/inboxes/$inboxId") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isNoContent() }
-                }
+                .perform(
+                    patch("/api/v1/inboxes/$inboxId")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isNoContent)
 
-            // Then: Verify it is marked as read via a list check if your DTO includes isRead
+            // Then: Verify it is marked as read
             mvc
-                .get("/api/v1/inboxes") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.inboxes[0].isRead").value(true)
-                }
+                .perform(
+                    get("/api/v1/inboxes")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.inboxes[0].isRead").value(true))
         }
 
         @Test
@@ -104,20 +106,18 @@ class InboxTests
 
             // When: Delete the specific inbox record
             mvc
-                .delete("/api/v1/inboxes/$inboxId") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isNoContent() }
-                }
+                .perform(
+                    delete("/api/v1/inboxes/$inboxId")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isNoContent)
 
             // Then: Verify the list is empty
             mvc
-                .get("/api/v1/inboxes") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.inboxes.length()").value(0)
-                }
+                .perform(
+                    get("/api/v1/inboxes")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.inboxes", hasSize<Any>(0))) // Safer than checking for empty list object
         }
 
         @Test
@@ -129,11 +129,10 @@ class InboxTests
 
             // When: User 1 tries to mark User 2's inbox as read
             mvc
-                .patch("/api/v1/inboxes/${user2Inbox.id}") {
-                    cookie(Cookie("AUTH-TOKEN", token1))
-                }.andExpect {
-                    status { isNotFound() }
-                }
+                .perform(
+                    patch("/api/v1/inboxes/${user2Inbox.id}")
+                        .cookie(Cookie("AUTH-TOKEN", token1)),
+                ).andExpect(status().isNotFound)
         }
 
         @Test
@@ -151,50 +150,47 @@ class InboxTests
             // 2. When: A new article is saved to Board 1
             val request =
                 CreateArticleRequest(
-                    title = "title",
+                    title = "title-123",
                     content = "content",
                     author = "snu",
-                    originLink = "https://example.com/article/123",
+                    originLink = null,
                     publishedAt = Instant.now(),
                 )
 
             // when & then
             mvc
                 .perform(
-                    MockMvcRequestBuilders
-                        .post("/api/v1/boards/1/articles")
+                    post("/api/v1/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isOk)
+                ).andExpect(status().isCreated)
 
             // 3. Then: User 1 and User 2 should have 1 inbox item, User 3 should have 0
 
             // Check User 1
+
             mvc
-                .get("/api/v1/inboxes") {
-                    cookie(Cookie("AUTH-TOKEN", token1))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.inboxes.length()").value(1)
-                    jsonPath("$.inboxes[0].article.title").value("Breaking News")
-                }
+                .perform(
+                    get("/api/v1/inboxes")
+                        .cookie(Cookie("AUTH-TOKEN", token1)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.inboxes").value(hasSize<List<Any>>(1)))
+                .andExpect(jsonPath("$.inboxes[0].article.title").value("title-123"))
 
             // Check User 2
             mvc
-                .get("/api/v1/inboxes") {
-                    cookie(Cookie("AUTH-TOKEN", token2))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.inboxes.length()").value(1)
-                }
+                .perform(
+                    get("/api/v1/inboxes")
+                        .cookie(Cookie("AUTH-TOKEN", token2)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.inboxes").value(hasSize<List<Any>>(1)))
 
             // Check User 3 (Subscribed to different board)
             mvc
-                .get("/api/v1/inboxes") {
-                    cookie(Cookie("AUTH-TOKEN", token3))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.inboxes.length()").value(0)
-                }
+                .perform(
+                    get("/api/v1/inboxes")
+                        .cookie(Cookie("AUTH-TOKEN", token3)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.inboxes").value(hasSize<List<Any>>(0)))
         }
     }

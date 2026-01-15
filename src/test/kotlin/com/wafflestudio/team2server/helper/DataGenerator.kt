@@ -2,13 +2,11 @@ package com.wafflestudio.team2server.helper
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.service.ArticleService
-import com.wafflestudio.team2server.board.model.Board
 import com.wafflestudio.team2server.board.repository.BoardRepository
 import com.wafflestudio.team2server.inboxes.model.Inbox
 import com.wafflestudio.team2server.inboxes.repository.InboxRepository
 import com.wafflestudio.team2server.subscription.model.Subscription
 import com.wafflestudio.team2server.subscription.repository.SubscriptionRepository
-import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.model.User
 import com.wafflestudio.team2server.user.repository.UserRepository
@@ -47,7 +45,7 @@ class DataGenerator(
         content: String? = null,
         publishedAt: Instant = Instant.now(),
         author: String? = null,
-        orginalLink: String? = null,
+        originLink: String? = null,
     ): Article {
         val article =
             articleService.saveNewArticle(
@@ -56,7 +54,7 @@ class DataGenerator(
                     content = content ?: "content-${Random.nextInt(1000000)}",
                     author = author ?: "author-${Random.nextInt(1000000)}",
                     publishedAt = publishedAt,
-                    originLink = orginalLink ?: "https://example.com/${UUID.randomUUID()}",
+                    originLink = originLink ?: "https://example.com/${UUID.randomUUID()}",
                     boardId = 1,
                 ),
             )

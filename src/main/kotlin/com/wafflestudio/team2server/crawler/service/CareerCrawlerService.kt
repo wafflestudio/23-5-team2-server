@@ -2,6 +2,7 @@ package com.wafflestudio.team2server.crawler.service
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.repository.ArticleRepository
+import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.crawler.BaseCrawler
 import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import org.jsoup.nodes.Document
@@ -15,9 +16,10 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class CareerCrawlerService(
-    private val crawlerRepository: CrawlerRepository,
-    private val articleRepository: ArticleRepository,
-) : BaseCrawler(crawlerRepository, articleRepository) {
+    crawlerRepository: CrawlerRepository,
+    articleRepository: ArticleRepository,
+    articleService: ArticleService,
+) : BaseCrawler(crawlerRepository, articleRepository, articleService) {
     override val listUrl = "https://career.snu.ac.kr/center/community/notice"
     override val baseUrl = "https://career.snu.ac.kr"
     override val targetBoardId = 4L

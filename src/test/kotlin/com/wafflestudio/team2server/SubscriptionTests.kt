@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.subscription.dto.CreateSubscriptionRequest
 import jakarta.servlet.http.Cookie
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -11,10 +12,11 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest
@@ -36,14 +38,13 @@ class SubscriptionTests
 
             // When & Then
             mvc
-                .post("/api/v1/subscriptions") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                    contentType = MediaType.APPLICATION_JSON
-                    content = mapper.writeValueAsString(request)
-                }.andExpect {
-                    status { isCreated() }
-                    jsonPath("$.boardId").value(1L)
-                }
+                .perform(
+                    post("/api/v1/subscriptions")
+                        .cookie(Cookie("AUTH-TOKEN", token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)),
+                ).andExpect(status().isCreated)
+                .andExpect(jsonPath("$.boardId").value(1L))
         }
 
         @Test
@@ -51,20 +52,17 @@ class SubscriptionTests
             // Given
             val (user, token) = dataGenerator.generateUser()
 
-            // Directly creating subscriptions via dataGenerator
-            // (Assuming you have a way to save these to the DB for the test user)
             dataGenerator.generateSubscription(user.id!!, 1L)
             dataGenerator.generateSubscription(user.id, 2L)
 
             // When & Then
             mvc
-                .get("/api/v1/subscriptions") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.subscriptions").isArray()
-                    jsonPath("$.subscriptions.length()").value(2)
-                }
+                .perform(
+                    get("/api/v1/subscriptions")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.subscriptions").isArray)
+                .andExpect(jsonPath("$.subscriptions", hasSize<Any>(2)))
         }
 
         @Test
@@ -76,27 +74,24 @@ class SubscriptionTests
 
             // When: Delete the subscription with another user
             mvc
-                .delete("/api/v1/subscriptions/${subscription.id!!}") {
-                    cookie(Cookie("AUTH-TOKEN", token2))
-                }.andExpect {
-                    status { isNotFound() }
-                }
+                .perform(
+                    delete("/api/v1/subscriptions/${subscription.id!!}")
+                        .cookie(Cookie("AUTH-TOKEN", token2)),
+                ).andExpect(status().isNotFound)
 
             // When: Delete the subscription
             mvc
-                .delete("/api/v1/subscriptions/${subscription.id}") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isNoContent() }
-                }
+                .perform(
+                    delete("/api/v1/subscriptions/${subscription.id}")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isNoContent)
 
             // Then: Verify it's gone
             mvc
-                .get("/api/v1/subscriptions") {
-                    cookie(Cookie("AUTH-TOKEN", token))
-                }.andExpect {
-                    status { isOk() }
-                    jsonPath("$.subscriptions.length()").value(0)
-                }
+                .perform(
+                    get("/api/v1/subscriptions")
+                        .cookie(Cookie("AUTH-TOKEN", token)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.subscriptions", hasSize<Any>(0)))
         }
     }
