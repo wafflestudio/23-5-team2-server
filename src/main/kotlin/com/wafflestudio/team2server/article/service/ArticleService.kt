@@ -39,17 +39,20 @@ class ArticleService(
     ): ArticlePagingResponse {
         val keyword = keyword?.trim()?.takeIf { it.isNotEmpty() }
 
-        val candidateBoardIds =
-            boardIds
-                ?.distinct()
-                ?.takeIf { it.isNotEmpty() }
-                ?: listOf(2L, 3L, 4L, 5L)
+        val boardFilter = !boardIds.isNullOrEmpty()
+        val boardIds =
+            if (boardFilter) {
+                boardIds
+            } else {
+                listOf(-1L)
+            }
 
         val queryLimit = limit + 1
 
         val articleWithBoards =
             articleRepository.findByBoardIdsWithCursor(
-                candidateBoardIds,
+                boardFilter,
+                boardIds,
                 keyword,
                 nextPublishedAt,
                 nextId,

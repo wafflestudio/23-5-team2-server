@@ -51,7 +51,8 @@ SELECT
 FROM articles a
 LEFT JOIN boards b
     ON a.board_id = b.id
-WHERE a.board_id IN (:boardIds)
+WHERE
+  ( :boardFilter = FALSE OR a.board_id IN (:boardIds) )
   AND (
       :keyword IS NULL
       OR a.title LIKE CONCAT('%', :keyword, '%')
@@ -63,6 +64,7 @@ LIMIT :limit
 """,
     )
     fun findByBoardIdsWithCursor(
+        @Param("boardFilter") boardFilter: Boolean,
         @Param("boardIds") boardIds: List<Long>,
         @Param("keyword") keyword: String?,
         @Param("nextPublishedAt") nextPublishedAt: Instant?,

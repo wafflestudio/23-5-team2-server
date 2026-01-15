@@ -5,7 +5,7 @@ import com.wafflestudio.team2server.board.model.Board
 data class BoardDto(
     val id: Long,
     val name: String,
-    val sourceUrl: String,
+    val sourceUrl: String?,
 ) {
     constructor(board: Board) : this(
         id = board.id!!,
