@@ -22,7 +22,7 @@ class CareerCrawlerService(
     override val baseUrl = "https://career.snu.ac.kr"
     override val targetBoardId = 4L
     override val code = "career"
-    override val crawlIntervalSeconds = 3600L
+    override val crawlIntervalSeconds = 86400L
 
     val detailDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
