@@ -78,7 +78,7 @@ class CareerCrawlerService(
         )
     }
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 86400000)
     fun runScheduled() {
         crawl()
         updateExecutionTime()
