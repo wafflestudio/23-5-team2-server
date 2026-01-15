@@ -1,5 +1,8 @@
 package com.wafflestudio.team2server
 
+import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
+import com.wafflestudio.team2server.crawler.service.CareerCrawlerService
+import com.wafflestudio.team2server.crawler.service.CseCrawlerService
 import com.wafflestudio.team2server.crawler.service.MysnuCrawlerService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -29,16 +32,34 @@ class CrawlerTests
         @MockitoBean
         private lateinit var mysnuCrawlerService: MysnuCrawlerService
 
+        @MockitoBean
+        private lateinit var cseCrawlerService: CseCrawlerService
+
+        @MockitoBean
+        private lateinit var careerCrawlerService: CareerCrawlerService
+
         @Test
         fun `succeed on calling crawler service`() {
             given(mysnuCrawlerService.code).willReturn("mysnu")
+            given(cseCrawlerService.code).willReturn("cse")
+            given(careerCrawlerService.code).willReturn("career")
 
             mvc
                 .perform(
                     post("/api/crawlers/mysnu/run"),
                 ).andExpect(status().isOk)
+            mvc
+                .perform(
+                    post("/api/crawlers/cse/run"),
+                ).andExpect(status().isOk)
+            mvc
+                .perform(
+                    post("/api/crawlers/career/run"),
+                ).andExpect(status().isOk)
 
             verify(mysnuCrawlerService).crawl()
+            verify(cseCrawlerService).crawl()
+            verify(careerCrawlerService).crawl()
         }
 
         @Test

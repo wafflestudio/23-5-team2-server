@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class JacksonConfig {
+    // javatime 모듈 인식하도록 추가
     @Bean
     fun objectMapper(): ObjectMapper =
         ObjectMapper()

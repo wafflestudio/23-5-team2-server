@@ -8,6 +8,7 @@ import com.wafflestudio.team2server.inboxes.model.Inbox
 import com.wafflestudio.team2server.inboxes.repository.InboxRepository
 import com.wafflestudio.team2server.subscription.model.Subscription
 import com.wafflestudio.team2server.subscription.repository.SubscriptionRepository
+import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.model.User
 import com.wafflestudio.team2server.user.repository.UserRepository
@@ -41,24 +42,9 @@ class DataGenerator(
         return user to jwtProvider.createToken(user.id!!)
     }
 
-    fun generateBoard(
-        name: String? = null,
-        sorceUrl: String? = null,
-    ): Board {
-        val board =
-            boardRepository.save(
-                Board(
-                    name = name ?: "board-${Random.nextInt(1000000)}",
-                    sourceUrl = sorceUrl ?: "https://example.com/${UUID.randomUUID()}",
-                ),
-            )
-        return board
-    }
-
     fun generateArticle(
         title: String? = null,
         content: String? = null,
-        board: Board? = null,
         publishedAt: Instant = Instant.now(),
         author: String? = null,
         orginalLink: String? = null,
@@ -71,7 +57,7 @@ class DataGenerator(
                     author = author ?: "author-${Random.nextInt(1000000)}",
                     publishedAt = publishedAt,
                     originLink = orginalLink ?: "https://example.com/${UUID.randomUUID()}",
-                    boardId = (board ?: generateBoard()).id!!,
+                    boardId = 1,
                 ),
             )
         return article
