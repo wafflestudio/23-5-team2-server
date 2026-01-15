@@ -71,10 +71,16 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없음"),
         ],
     )
-    @GetMapping("/boards/{boardId}/articles")
+    @GetMapping("/articles")
     fun paging(
-        @Parameter(description = "게시판 ID", example = "1")
-        @PathVariable boardId: Long,
+        @Parameter(
+            description = "게시판 ID",
+            example = "2,3",
+        )@RequestParam(value = "boardIds", required = false) boardIds: String?,
+        @Parameter(
+            description = "키워드 필터",
+            example = "장학",
+        )@RequestParam(value = "keyword", required = false) keyword: String?,
         @Parameter(
             description = "다음 페이지 커서 - 이전 응답의 마지막 게시글 생성 시간 (Unix timestamp, milliseconds)",
         ) @RequestParam(value = "nextPublishedAt", required = false) nextPublishedAt: Long?,
@@ -86,9 +92,17 @@ class ArticleController(
             example = "20",
         ) @RequestParam(value = "limit", defaultValue = "20") limit: Int,
     ): ResponseEntity<ArticlePagingResponse> {
+        val parsedBoardIds: List<Long>? =
+            boardIds
+                ?.split(",")
+                ?.mapNotNull { it.trim().takeIf(String::isNotEmpty)?.toLongOrNull() }
+                ?.distinct()
+                ?.takeIf { it.isNotEmpty() }
+
         val articlePagingResponse =
             articleService.pageByBoardId(
-                boardId = boardId,
+                boardIds = parsedBoardIds,
+                keyword = keyword,
                 nextPublishedAt = nextPublishedAt?.let { Instant.ofEpochMilli(it) },
                 nextId = nextId,
                 limit = limit,

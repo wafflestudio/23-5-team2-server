@@ -17,6 +17,6 @@ data class ArticleWithBoard(
     data class Board(
         val id: Long,
         val name: String,
-        val sourceUrl: String,
+        val sourceUrl: String?,
     )
 }

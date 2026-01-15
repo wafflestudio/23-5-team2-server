@@ -31,23 +31,43 @@ class ArticleService(
     }
 
     fun pageByBoardId(
-        boardId: Long,
+        boardIds: List<Long>?,
+        keyword: String?,
         nextPublishedAt: Instant?,
         nextId: Long?,
         limit: Int,
     ): ArticlePagingResponse {
-        val board = boardRepository.findByIdOrNull(boardId) ?: throw BoardNotFoundException()
+        val keyword = keyword?.trim()?.takeIf { it.isNotEmpty() }
+
+        val boardFilter = !boardIds.isNullOrEmpty()
+        val boardIds =
+            if (boardFilter) {
+                boardIds
+            } else {
+                listOf(-1L)
+            }
 
         val queryLimit = limit + 1
+
         val articleWithBoards =
-            articleRepository.findByBoardIdWithCursor(board.id!!, nextPublishedAt, nextId, queryLimit)
+            articleRepository.findByBoardIdsWithCursor(
+                boardFilter,
+                boardIds,
+                keyword,
+                nextPublishedAt,
+                nextId,
+                queryLimit,
+            )
+
         val hasNext = articleWithBoards.size > limit
         val pageArticles = if (hasNext) articleWithBoards.subList(0, limit) else articleWithBoards
+
         val newNextPublishedAt = if (hasNext) pageArticles.last().publishedAt else null
-        val newnextId = if (hasNext) pageArticles.last().id else null
+        val newNextId = if (hasNext) pageArticles.last().id else null
+
         return ArticlePagingResponse(
             pageArticles.map { ArticleDto(it) },
-            ArticlePaging(newNextPublishedAt?.toEpochMilli(), newnextId, hasNext),
+            ArticlePaging(newNextPublishedAt?.toEpochMilli(), newNextId, hasNext),
         )
     }
 

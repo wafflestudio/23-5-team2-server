@@ -6,11 +6,12 @@ import com.wafflestudio.team2server.article.dto.core.ArticleDto
 import com.wafflestudio.team2server.article.dto.request.CreateArticleRequest
 import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.model.Article
+import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.article.service.ArticleService
-import com.wafflestudio.team2server.board.model.Board
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.helper.QueryCounter
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,9 +20,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
+import org.springframework.test.web.servlet.post
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
 
@@ -29,7 +31,7 @@ import java.time.Instant
 @ActiveProfiles("test")
 @Testcontainers
 @AutoConfigureMockMvc
-class ArticleIntegrationTest
+class ArticleIntegrationTests
     @Autowired
     constructor(
         private val dataGenerator: DataGenerator,
@@ -37,11 +39,16 @@ class ArticleIntegrationTest
         private val mvc: MockMvc,
         private val mapper: ObjectMapper,
         private val articleService: ArticleService,
+        private val articleRepository: ArticleRepository,
     ) {
+        @BeforeEach
+        fun cleanDummyBoardArticles() {
+            articleRepository.deleteAllByBoardId(1L)
+        }
+
         @Test
         fun `should create a article`() {
             // given
-            val board = dataGenerator.generateBoard()
             val request =
                 CreateArticleRequest(
                     title = "title",
@@ -53,16 +60,16 @@ class ArticleIntegrationTest
 
             // when & then
             mvc
-                .perform(
-                    MockMvcRequestBuilders
-                        .post("/api/v1/boards/${board.id!!}/articles")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isOk)
-                .andExpect(jsonPath("$.title").value(request.title))
-                .andExpect(jsonPath("$.content").value(request.content))
-                .andExpect(jsonPath("$.author").value(request.author))
-                .andExpect(jsonPath("$.originLink").value(request.originLink))
+                .post("/api/v1/boards/1/articles") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(request)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.title") { value(request.title) }
+                    jsonPath("$.content") { value(request.content) }
+                    jsonPath("$.author") { value(request.author) }
+                    jsonPath("$.originLink") { value(request.originLink) }
+                }
         }
 
         @Disabled
@@ -70,7 +77,6 @@ class ArticleIntegrationTest
         fun `should not create a with blank title`() {
             // title이 blank이면 article을 생성할 수 없다.
             // given
-            val board = dataGenerator.generateBoard()
             val request =
                 CreateArticleRequest(
                     title = "   ", // blank
@@ -82,12 +88,16 @@ class ArticleIntegrationTest
 
             // when & then
             mvc
-                .perform(
-                    MockMvcRequestBuilders
-                        .post("/api/v1/boards/${board.id!!}/articles")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isBadRequest)
+                .post("/api/v1/boards/1/articles") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(request)
+                }.andExpect {
+                    status { isBadRequest() }
+                    jsonPath("$.title") { value(request.title) }
+                    jsonPath("$.content") { value(request.content) }
+                    jsonPath("$.author") { value(request.author) }
+                    jsonPath("$.originLink") { value(request.originLink) }
+                }
         }
 
         @Test
@@ -98,14 +108,15 @@ class ArticleIntegrationTest
 
             // when & then
             mvc
-                .perform(
-                    MockMvcRequestBuilders.get("/api/v1/articles/${article.id}"),
-                ).andExpect(status().isOk)
-                .andExpect(jsonPath("$.id").value(article.id))
-                .andExpect(jsonPath("$.title").value(article.title))
-                .andExpect(jsonPath("$.content").value(article.content))
-                .andExpect(jsonPath("$.author").value(article.author))
-                .andExpect(jsonPath("$.originLink").value(article.originLink))
+                .get("/api/v1/articles/${article.id}")
+                .andExpect {
+                    status { isOk() }
+                    jsonPath("$.id") { value(article.id) }
+                    jsonPath("$.title") { value(article.title) }
+                    jsonPath("$.content") { value(article.content) }
+                    jsonPath("$.author") { value(article.author) }
+                    jsonPath("$.originLink") { value(article.originLink) }
+                }
         }
 
         @Test
@@ -120,16 +131,16 @@ class ArticleIntegrationTest
                 )
             // when & then
             mvc
-                .perform(
-                    MockMvcRequestBuilders
-                        .patch("/api/v1/articles/${article.id}")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isOk)
-                .andExpect(jsonPath("$.id").value(article.id))
-                .andExpect(jsonPath("$.title").value(request.title))
-                .andExpect(jsonPath("$.content").value(request.content))
-                .andExpect(jsonPath("$.author").value(article.author))
+                .patch("/api/v1/articles/${article.id}") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(request)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.id") { value(article.id) }
+                    jsonPath("$.title") { value(request.title) }
+                    jsonPath("$.content") { value(request.content) }
+                    jsonPath("$.author") { value(article.author) }
+                }
         }
 
         @Disabled
@@ -145,12 +156,12 @@ class ArticleIntegrationTest
                 )
             // when & then
             mvc
-                .perform(
-                    MockMvcRequestBuilders
-                        .patch("/api/v1/articles/${article.id}")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isBadRequest)
+                .patch("/api/v1/articles/${article.id}") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = mapper.writeValueAsString(request)
+                }.andExpect {
+                    status { isBadRequest() }
+                }
         }
 
         @Test
@@ -160,56 +171,59 @@ class ArticleIntegrationTest
             val article = dataGenerator.generateArticle()
             // when & then
             mvc
-                .perform(
-                    MockMvcRequestBuilders.delete("/api/v1/articles/${article.id}"),
-                ).andExpect(status().isNoContent)
+                .delete("/api/v1/articles/${article.id}")
+                .andExpect {
+                    status { isNoContent() }
+                }
             mvc
-                .perform(
-                    MockMvcRequestBuilders.delete("/api/v1/articles/${article.id}"),
-                ).andExpect(status().isNotFound)
+                .delete("/api/v1/articles/${article.id}")
+                .andExpect {
+                    status { isNotFound() }
+                }
         }
 
         @Test
         fun `should paginate posts using published_at and id as cursor`() {
             // publised_at과 id를 커서로 하여 게시판의 게시글을 페이지네이션 함
             // given
-            val board = dataGenerator.generateBoard()
             repeat(30) {
-                dataGenerator.generateArticle(board = board)
+                dataGenerator.generateArticle()
             }
             // when & then
             val response =
                 mvc
-                    .perform(
-                        MockMvcRequestBuilders.get("/api/v1/boards/${board.id!!}/articles?limit=15"),
-                    ).andExpect(status().isOk)
-                    .andExpect(jsonPath("$.paging.hasNext").value(true))
-                    .andReturn()
-                    .response
-                    .getContentAsString(Charsets.UTF_8)
-                    .let {
-                        mapper.readValue(it, ArticlePagingResponse::class.java)
-                    }
-            assertArticlesAreSorted(response.data)
-            assertArticleAreInBoard(response.data, board)
-
-            val nextResponse =
-                mvc
-                    .perform(
-                        MockMvcRequestBuilders
-                            .get("/api/v1/boards/${board.id!!}/articles")
-                            .param("limit", "15")
-                            .param("nextPublishedAt", response.paging.nextPublishedAt!!.toString())
-                            .param("nextId", response.paging.nextId!!.toString())
-                            .accept(MediaType.APPLICATION_JSON),
-                    ).andExpect(status().isOk)
-                    .andExpect(jsonPath("$.paging.hasNext").value(false))
-                    .andReturn()
+                    .get("/api/v1/articles") {
+                        param("limit", "15")
+                        param("boardIds", "1,")
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.paging.hasNext") { value(true) }
+                    }.andReturn()
                     .response
                     .getContentAsString(Charsets.UTF_8)
                     .let { mapper.readValue(it, ArticlePagingResponse::class.java) }
+
+            assertArticlesAreSorted(response.data)
+            assertArticlesAreInBoard(response.data)
+
+            val nextResponse =
+                mvc
+                    .get("/api/v1/articles") {
+                        param("boardIds", "1,")
+                        param("limit", "15")
+                        param("nextPublishedAt", response.paging.nextPublishedAt!!.toString())
+                        param("nextId", response.paging.nextId!!.toString())
+                        accept = MediaType.APPLICATION_JSON
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.paging.hasNext") { value(false) }
+                    }.andReturn()
+                    .response
+                    .getContentAsString(Charsets.UTF_8)
+                    .let { mapper.readValue(it, ArticlePagingResponse::class.java) }
+
             assertArticlesAreSorted(nextResponse.data)
-            assertArticleAreInBoard(nextResponse.data, board)
+            assertArticlesAreInBoard(nextResponse.data)
             assertTrue((response.data.map { it.id } + nextResponse.data.map { it.id }).toSet().size == 30)
         }
 
@@ -217,25 +231,54 @@ class ArticleIntegrationTest
         fun `Only two queries are fired during pagination`() {
             // 쿼리는 두번만 나간다
             // given
-            val board = dataGenerator.generateBoard()
             val articles =
                 List(10) {
-                    dataGenerator.generateArticle(board = board)
+                    dataGenerator.generateArticle()
                 }
             val response =
-                queryCounter.assertQueryCount(2) {
+                queryCounter.assertQueryCount(1) {
                     mvc
-                        .perform(
-                            MockMvcRequestBuilders.get("/api/v1/boards/${board.id!!}/articles?limit=20"),
-                        ).andExpect(status().isOk)
-                        .andReturn()
+                        .get("/api/v1/articles") {
+                            param("limit", "20")
+                            param("boardIds", "1,")
+                        }.andExpect {
+                            status { isOk() }
+                        }.andReturn()
                         .response
                         .getContentAsString(Charsets.UTF_8)
                         .let {
                             mapper.readValue(it, ArticlePagingResponse::class.java)
                         }
                 }
-            assertArticlesAreSame(response.data, articles, board)
+            assertArticlesAreSame(response.data, articles)
+        }
+
+        @Test
+        fun `should filter articles by keyword`() {
+            // 키워드 필터가 가능하다.
+            // given
+
+            dataGenerator.generateArticle(
+                title = "waffle",
+            )
+
+            dataGenerator.generateArticle(
+                title = "eus",
+            )
+            // when & then
+            mvc
+                .get("/api/v1/articles") {
+                    param("limit", "15")
+                    param("boardIds", "1,")
+                    param("keyword", "waffle")
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.data.length()") { value(1) }
+                    jsonPath("$.data[0].title") {
+                        value(org.hamcrest.Matchers.containsString("waffle"))
+                    }
+                }
         }
 
         private fun assertArticlesAreSorted(articles: List<ArticleDto>) {
@@ -256,29 +299,28 @@ class ArticleIntegrationTest
             }
         }
 
-        private fun assertArticleAreInBoard(
-            posts: List<ArticleDto>,
-            board: Board,
-        ) {
-            posts.forEach {
-                assertTrue(it.board.id == board.id)
+        private fun assertArticlesAreInBoard(articles: List<ArticleDto>) {
+            articles.forEach {
+                assertTrue(it.board.id == 1L)
             }
         }
 
         private fun assertArticlesAreSame(
             targetArticles: List<ArticleDto>,
             originalArticles: List<Article>,
-            board: Board,
         ) {
-            val expected =
+            val originalArticleDtos =
                 originalArticles
-                    .map { ArticleDto(it, board) }
+                    .map { articleService.get(articleId = it.id!!) }
                     .sortedWith(
                         compareByDescending<ArticleDto> { it.publishedAt }
                             .thenByDescending { it.id },
                     )
+            assertTrue(targetArticles.size == originalArticleDtos.size)
 
-            val expectedKeys = expected.map { Pair(it.board, it.id) }
-            val actualKeys = targetArticles.map { Pair(it.board, it.id) }
+            targetArticles.zip(originalArticleDtos).forEach { (target, expected) ->
+                assertTrue(target.id == expected.id)
+                assertTrue(target.board.id == expected.board.id)
+            }
         }
     }

@@ -10,7 +10,7 @@ import java.time.Instant
 class Board(
     @Id var id: Long? = null,
     var name: String,
-    var sourceUrl: String,
+    var sourceUrl: String? = null,
     @CreatedDate
     var createdAt: Instant? = null,
     @LastModifiedDate
