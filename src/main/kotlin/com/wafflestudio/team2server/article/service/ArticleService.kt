@@ -10,9 +10,11 @@ import com.wafflestudio.team2server.article.dto.ArticlePaging
 import com.wafflestudio.team2server.article.dto.core.ArticleDto
 import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.model.Article
+import com.wafflestudio.team2server.article.model.ArticleCreatedEvent
 import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.board.BoardNotFoundException
 import com.wafflestudio.team2server.board.repository.BoardRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -21,6 +23,7 @@ import java.time.Instant
 class ArticleService(
     private val articleRepository: ArticleRepository,
     private val boardRepository: BoardRepository,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     fun get(articleId: Long): ArticleDto {
         val articleWithBoard =
@@ -74,10 +77,10 @@ class ArticleService(
     fun create(
         content: String,
         author: String,
-        originLink: String,
+        originLink: String?,
         title: String,
         boardId: Long,
-        publihedAt: Instant?,
+        publishedAt: Instant?,
     ): ArticleDto {
         if (content.isBlank()) {
             throw ArticleBlankContentException()
@@ -85,10 +88,10 @@ class ArticleService(
         if (author.isBlank()) {
             throw ArticleBlankAuthorException()
         }
-        if (publihedAt == null) {
+        if (publishedAt == null) {
             throw ArticleBlankPublishedException()
         }
-        if (originLink.isBlank()) {
+        if (originLink != null && originLink.isBlank()) {
             throw ArticleBlankOriginLinkException()
         }
         if (title.isBlank()) {
@@ -97,14 +100,14 @@ class ArticleService(
         val board = boardRepository.findByIdOrNull(boardId) ?: throw BoardNotFoundException()
 
         val article =
-            articleRepository.save(
+            saveNewArticle(
                 Article(
                     boardId = board.id!!,
                     content = content,
                     author = author,
                     originLink = originLink,
                     title = title,
-                    publishedAt = publihedAt,
+                    publishedAt = publishedAt,
                 ),
             )
         return ArticleDto(article, board)
@@ -136,7 +139,7 @@ class ArticleService(
         originLink?.let { article.originLink = it }
         publishedAt?.let { article.publishedAt = it }
         title?.let { article.title = it }
-        articleRepository.save(article)
+        saveNewArticle(article)
         val articleWithBoard = articleRepository.findByIdWithBoard(articleId) ?: throw ArticleNotFoundException()
         return ArticleDto(articleWithBoard)
     }
@@ -144,6 +147,11 @@ class ArticleService(
     fun delete(articleId: Long) {
         val article = articleRepository.findByIdOrNull(articleId) ?: throw ArticleNotFoundException()
         articleRepository.delete(article)
-        // 삭제시 기사 포린키로 갖고 있는 개체들 삭제 되었는지 확인 필요(나중에 개발시)
+    }
+
+    fun saveNewArticle(article: Article): Article {
+        val savedArticle = articleRepository.save(article)
+        eventPublisher.publishEvent(ArticleCreatedEvent(savedArticle))
+        return savedArticle
     }
 }

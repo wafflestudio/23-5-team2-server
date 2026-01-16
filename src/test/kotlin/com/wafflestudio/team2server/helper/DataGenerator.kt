@@ -1,7 +1,12 @@
 package com.wafflestudio.team2server.helper
 
 import com.wafflestudio.team2server.article.model.Article
-import com.wafflestudio.team2server.article.repository.ArticleRepository
+import com.wafflestudio.team2server.article.service.ArticleService
+import com.wafflestudio.team2server.board.repository.BoardRepository
+import com.wafflestudio.team2server.inboxes.model.Inbox
+import com.wafflestudio.team2server.inboxes.repository.InboxRepository
+import com.wafflestudio.team2server.subscription.model.Subscription
+import com.wafflestudio.team2server.subscription.repository.SubscriptionRepository
 import com.wafflestudio.team2server.user.JwtProvider
 import com.wafflestudio.team2server.user.model.User
 import com.wafflestudio.team2server.user.repository.UserRepository
@@ -16,7 +21,10 @@ class DataGenerator(
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
     private val bcryptPasswordEncoder: BCryptPasswordEncoder,
-    private val articleRepository: ArticleRepository,
+    private val boardRepository: BoardRepository,
+    private val articleService: ArticleService,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val inboxRepository: InboxRepository,
 ) {
     fun generateUser(
         userId: String? = null,
@@ -37,19 +45,32 @@ class DataGenerator(
         content: String? = null,
         publishedAt: Instant = Instant.now(),
         author: String? = null,
-        orginalLink: String? = null,
+        originLink: String? = null,
     ): Article {
         val article =
-            articleRepository.save(
+            articleService.saveNewArticle(
                 Article(
                     title = title ?: "article-${Random.nextInt(1000000)}",
                     content = content ?: "content-${Random.nextInt(1000000)}",
                     author = author ?: "author-${Random.nextInt(1000000)}",
                     publishedAt = publishedAt,
-                    originLink = orginalLink ?: "https://example.com/${UUID.randomUUID()}",
+                    originLink = originLink ?: "https://example.com/${UUID.randomUUID()}",
                     boardId = 1,
                 ),
             )
         return article
+    }
+
+    fun generateSubscription(
+        userId: Long,
+        boardId: Long,
+    ): Subscription = subscriptionRepository.save(Subscription(userId = userId, boardId = boardId))
+
+    fun generateInbox(
+        userId: Long,
+        articleTitle: String?,
+    ): Inbox {
+        val article = generateArticle(title = articleTitle)
+        return inboxRepository.save(Inbox(userId = userId, articleId = article.id!!))
     }
 }

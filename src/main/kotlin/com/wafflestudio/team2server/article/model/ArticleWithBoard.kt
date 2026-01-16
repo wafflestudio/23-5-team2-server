@@ -9,7 +9,7 @@ data class ArticleWithBoard(
     val content: String,
     val author: String,
     val title: String,
-    val originLink: String,
+    val originLink: String?,
     val publishedAt: Instant,
     val createdAt: Instant,
     val updatedAt: Instant,

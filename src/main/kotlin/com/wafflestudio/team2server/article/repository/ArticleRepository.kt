@@ -75,4 +75,6 @@ LIMIT :limit
     fun existsByOriginLink(originLink: String): Boolean
 
     fun deleteAllByBoardId(boardId: Long)
+
+    // Do not use save directly. Instead, use ArticleService.saveNewArticle. It triggers ArticleCreatedEvent and the inbox adding logic.
 }

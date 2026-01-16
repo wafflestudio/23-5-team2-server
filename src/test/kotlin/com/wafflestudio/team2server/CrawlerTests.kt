@@ -1,6 +1,5 @@
 package com.wafflestudio.team2server
 
-import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import com.wafflestudio.team2server.crawler.service.CareerCrawlerService
 import com.wafflestudio.team2server.crawler.service.CseCrawlerService
 import com.wafflestudio.team2server.crawler.service.MysnuCrawlerService
@@ -28,7 +27,6 @@ class CrawlerTests
     @Autowired
     constructor(
         private val mvc: MockMvc,
-        private val crawlerRepository: CrawlerRepository,
     ) {
         @MockitoBean
         private lateinit var mysnuCrawlerService: MysnuCrawlerService

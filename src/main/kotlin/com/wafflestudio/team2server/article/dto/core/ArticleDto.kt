@@ -4,17 +4,18 @@ import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.model.ArticleWithBoard
 import com.wafflestudio.team2server.board.dto.core.BoardDto
 import com.wafflestudio.team2server.board.model.Board
+import java.time.Instant
 
 data class ArticleDto(
     val id: Long,
     val board: BoardDto,
     val content: String,
     val author: String,
-    val originLink: String,
+    val originLink: String?,
     val title: String,
-    val publishedAt: Long,
-    val createdAt: Long,
-    val updatedAt: Long,
+    val publishedAt: Instant,
+    val createdAt: Instant,
+    val updatedAt: Instant,
 ) {
     constructor(article: Article, board: Board) : this(
         id = article.id!!,
@@ -23,9 +24,9 @@ data class ArticleDto(
         author = article.author,
         originLink = article.originLink,
         title = article.title,
-        publishedAt = article.publishedAt.toEpochMilli(),
-        createdAt = article.createdAt!!.toEpochMilli(),
-        updatedAt = article.updatedAt!!.toEpochMilli(),
+        publishedAt = article.publishedAt,
+        createdAt = article.createdAt!!,
+        updatedAt = article.updatedAt!!,
     )
 
     constructor(articleWithBoard: ArticleWithBoard) : this(
@@ -40,8 +41,8 @@ data class ArticleDto(
         author = articleWithBoard.author,
         originLink = articleWithBoard.originLink,
         title = articleWithBoard.title,
-        publishedAt = articleWithBoard.publishedAt.toEpochMilli(),
-        createdAt = articleWithBoard.createdAt.toEpochMilli(),
-        updatedAt = articleWithBoard.updatedAt.toEpochMilli(),
+        publishedAt = articleWithBoard.publishedAt,
+        createdAt = articleWithBoard.createdAt,
+        updatedAt = articleWithBoard.updatedAt,
     )
 }

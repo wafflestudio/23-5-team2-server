@@ -2,6 +2,7 @@ package com.wafflestudio.team2server.crawler.service
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.repository.ArticleRepository
+import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.crawler.BaseCrawler
 import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import org.jsoup.nodes.Document
@@ -15,9 +16,10 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class MysnuCrawlerService(
-    private val crawlerRepository: CrawlerRepository,
-    private val articleRepository: ArticleRepository,
-) : BaseCrawler(crawlerRepository, articleRepository) {
+    crawlerRepository: CrawlerRepository,
+    articleRepository: ArticleRepository,
+    articleService: ArticleService,
+) : BaseCrawler(crawlerRepository, articleRepository, articleService) {
     override val listUrl = "https://my.snu.ac.kr/ctt/bb/bulletin?b=1&ls=20&ln=1&dm=m&inB=&inPx="
     override val baseUrl = "https://my.snu.ac.kr"
     override val targetBoardId = 2L
@@ -62,7 +64,7 @@ class MysnuCrawlerService(
             try {
                 val localDateTime = LocalDateTime.parse(dateStr, formatter)
                 localDateTime.atZone(ZoneId.of("Asia/Seoul")).toInstant()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 Instant.now()
             }
 
