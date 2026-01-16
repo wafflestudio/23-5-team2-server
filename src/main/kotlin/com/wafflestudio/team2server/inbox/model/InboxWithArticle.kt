@@ -1,4 +1,4 @@
-package com.wafflestudio.team2server.inboxes.model
+package com.wafflestudio.team2server.inbox.model
 
 import com.wafflestudio.team2server.article.model.ArticleWithBoard
 import org.springframework.data.relational.core.mapping.Embedded

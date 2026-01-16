@@ -3,8 +3,8 @@ package com.wafflestudio.team2server.helper
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.board.repository.BoardRepository
-import com.wafflestudio.team2server.inboxes.model.Inbox
-import com.wafflestudio.team2server.inboxes.repository.InboxRepository
+import com.wafflestudio.team2server.inbox.model.Inbox
+import com.wafflestudio.team2server.inbox.repository.InboxRepository
 import com.wafflestudio.team2server.subscription.model.Subscription
 import com.wafflestudio.team2server.subscription.repository.SubscriptionRepository
 import com.wafflestudio.team2server.user.JwtProvider

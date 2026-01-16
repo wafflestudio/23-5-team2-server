@@ -1,11 +1,11 @@
-package com.wafflestudio.team2server.inboxes.service
+package com.wafflestudio.team2server.inbox.service
 
 import com.wafflestudio.team2server.article.model.Article
-import com.wafflestudio.team2server.inboxes.InboxNotFoundException
-import com.wafflestudio.team2server.inboxes.dto.InboxPaging
-import com.wafflestudio.team2server.inboxes.dto.InboxPagingResponse
-import com.wafflestudio.team2server.inboxes.dto.core.InboxDto
-import com.wafflestudio.team2server.inboxes.repository.InboxRepository
+import com.wafflestudio.team2server.inbox.InboxNotFoundException
+import com.wafflestudio.team2server.inbox.dto.InboxPaging
+import com.wafflestudio.team2server.inbox.dto.InboxPagingResponse
+import com.wafflestudio.team2server.inbox.dto.core.InboxDto
+import com.wafflestudio.team2server.inbox.repository.InboxRepository
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,4 +1,4 @@
-package com.wafflestudio.team2server.inboxes.model
+package com.wafflestudio.team2server.inbox.model
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
