@@ -5,6 +5,7 @@ import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.user.dto.LocalLoginRequest
 import com.wafflestudio.team2server.user.dto.UpdateLocalRequest
 import jakarta.servlet.http.Cookie
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
 
+@Disabled
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers

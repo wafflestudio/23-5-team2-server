@@ -1,4 +1,4 @@
-package com.wafflestudio.team2server.inboxes
+package com.wafflestudio.team2server.inbox
 
 import com.wafflestudio.team2server.DomainException
 import org.springframework.http.HttpStatus

@@ -1,7 +1,7 @@
-package com.wafflestudio.team2server.inboxes.repository
+package com.wafflestudio.team2server.inbox.repository
 
-import com.wafflestudio.team2server.inboxes.model.Inbox
-import com.wafflestudio.team2server.inboxes.model.InboxWithArticle
+import com.wafflestudio.team2server.inbox.model.Inbox
+import com.wafflestudio.team2server.inbox.model.InboxWithArticle
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.ListCrudRepository

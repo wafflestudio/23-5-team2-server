@@ -1,4 +1,4 @@
-package com.wafflestudio.team2server.inboxes.dto
+package com.wafflestudio.team2server.inbox.dto
 
 data class InboxPaging(
     val nextId: Long?,

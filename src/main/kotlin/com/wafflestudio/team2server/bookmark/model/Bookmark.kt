@@ -1,16 +1,15 @@
-package com.wafflestudio.team2server.inboxes.model
+package com.wafflestudio.team2server.bookmark.model
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
-@Table("inboxes")
-class Inbox(
+@Table("bookmarks")
+class Bookmark(
     @Id val id: Long? = null,
     var userId: Long,
     var articleId: Long,
-    var isRead: Boolean = false,
     @CreatedDate
     var createdAt: Instant? = null,
 )

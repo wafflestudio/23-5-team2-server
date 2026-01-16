@@ -1,7 +1,7 @@
 package com.wafflestudio.team2server.article
 
 import com.wafflestudio.team2server.article.model.ArticleCreatedEvent
-import com.wafflestudio.team2server.inboxes.service.InboxService
+import com.wafflestudio.team2server.inbox.service.InboxService
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional

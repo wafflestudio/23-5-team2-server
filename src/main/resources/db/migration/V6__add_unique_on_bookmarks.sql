@@ -1,0 +1,1 @@
+ALTER TABLE bookmarks ADD CONSTRAINT UNIQUE (user_id, article_id);
