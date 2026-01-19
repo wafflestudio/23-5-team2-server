@@ -6,9 +6,14 @@ import org.springframework.data.repository.ListCrudRepository
 import org.springframework.data.repository.query.Param
 
 interface EmailRepository : ListCrudRepository<Email, Long> {
-    fun findByUserId(userId: Long): Email?
+    fun findAllByUserId(userId: Long): List<Email>
 
     fun existsByEmail(email: String): Boolean
+
+    fun findByUserIdAndEmail(
+        userId: Long,
+        email: String,
+    ): Email
 
     @Query(
         """

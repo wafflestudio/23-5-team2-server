@@ -19,30 +19,29 @@ class EmailController(
     private val emailService: EmailService,
 ) {
     @PostMapping
-    fun registerEmail(
+    fun addEmail(
         @Parameter(hidden = true) @LoggedInUser user: User,
         @RequestBody request: EmailRequestAndResponse,
     ): ResponseEntity<Unit> {
-        emailService.registerEmail(user.id!!, request.email)
+        emailService.addEmail(user.id!!, request.email)
         return ResponseEntity.ok().build()
     }
 
     @GetMapping
-    fun getMyEmail(
+    fun getMyEmails(
         @Parameter(hidden = true) @LoggedInUser user: User,
-    ): ResponseEntity<EmailRequestAndResponse> {
-        val email =
-            emailService.getMyEmail(user.id!!)
-                ?: throw IllegalArgumentException("등록된 이메일이 없습니다.")
-
-        return ResponseEntity.ok(EmailRequestAndResponse(email))
+    ): ResponseEntity<List<EmailRequestAndResponse>> {
+        val emails = emailService.getMyEmails(user.id!!)
+        val response = emails.map { EmailRequestAndResponse(it.email) }
+        return ResponseEntity.ok(response)
     }
 
     @DeleteMapping
     fun deleteEmail(
         @Parameter(hidden = true) @LoggedInUser user: User,
+        @RequestBody request: EmailRequestAndResponse,
     ): ResponseEntity<Unit> {
-        emailService.deleteEmail(user.id!!)
+        emailService.deleteEmail(user.id!!, request.email)
         return ResponseEntity.noContent().build()
     }
 }

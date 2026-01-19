@@ -14,7 +14,6 @@ class JwtProvider(
     private val secretKey: String,
     @Value("\${jwt.expiration-in-ms}")
     private val expirationInMs: Long,
-    @Value("\${jwt.secure}") private val secure: Boolean,
 ) {
     private val key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
