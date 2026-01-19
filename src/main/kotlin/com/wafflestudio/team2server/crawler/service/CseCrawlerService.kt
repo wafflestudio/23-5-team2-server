@@ -7,7 +7,6 @@ import com.wafflestudio.team2server.crawler.BaseCrawler
 import com.wafflestudio.team2server.crawler.repository.CrawlerRepository
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -20,8 +19,6 @@ class CseCrawlerService(
     private val articleRepository: ArticleRepository,
     private val articleService: ArticleService,
 ) : BaseCrawler(crawlerRepository, articleRepository, articleService) {
-    private val log = LoggerFactory.getLogger(this::class.java)
-
     override val listUrl = "https://cse.snu.ac.kr/community/notice"
     override val baseUrl = "https://cse.snu.ac.kr"
     override val targetBoardId = 3L
@@ -161,6 +158,6 @@ class CseCrawlerService(
 
     @Scheduled(fixedRate = 3600000)
     fun runScheduled() {
-//        crawl()
+        crawl()
     }
 }
