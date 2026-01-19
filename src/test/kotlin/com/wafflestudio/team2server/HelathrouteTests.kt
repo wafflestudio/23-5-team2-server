@@ -18,7 +18,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 class HelathrouteTests(
     @Autowired private val mvc: MockMvc,
 ) {
-
     @Test
     fun health_is_up() {
         // healthroute 정상작동한다
