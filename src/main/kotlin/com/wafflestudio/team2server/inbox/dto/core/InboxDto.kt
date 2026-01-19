@@ -1,8 +1,8 @@
-package com.wafflestudio.team2server.inboxes.dto.core
+package com.wafflestudio.team2server.inbox.dto.core
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.team2server.article.dto.core.ArticleDto
-import com.wafflestudio.team2server.inboxes.model.InboxWithArticle
+import com.wafflestudio.team2server.inbox.model.InboxWithArticle
 import java.time.Instant
 
 data class InboxDto(

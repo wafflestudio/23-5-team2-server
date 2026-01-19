@@ -3,7 +3,7 @@ package com.wafflestudio.team2server
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.team2server.article.dto.request.CreateArticleRequest
 import com.wafflestudio.team2server.helper.DataGenerator
-import com.wafflestudio.team2server.inboxes.dto.InboxPagingResponse
+import com.wafflestudio.team2server.inbox.dto.InboxPagingResponse
 import jakarta.servlet.http.Cookie
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test

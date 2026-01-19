@@ -1,7 +1,7 @@
-package com.wafflestudio.team2server.inboxes.controller
+package com.wafflestudio.team2server.inbox.controller
 
-import com.wafflestudio.team2server.inboxes.dto.InboxPagingResponse
-import com.wafflestudio.team2server.inboxes.service.InboxService
+import com.wafflestudio.team2server.inbox.dto.InboxPagingResponse
+import com.wafflestudio.team2server.inbox.service.InboxService
 import com.wafflestudio.team2server.user.LoggedInUser
 import com.wafflestudio.team2server.user.model.User
 import io.swagger.v3.oas.annotations.Operation
