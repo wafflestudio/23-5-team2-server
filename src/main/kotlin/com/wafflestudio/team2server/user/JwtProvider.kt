@@ -73,6 +73,6 @@ class JwtProvider(
             .path("/") // Available for all routes
             .maxAge((getExpiration(token) - System.currentTimeMillis()) / 1000)
             .sameSite("None")
-            .secure(secure)
+            .secure(true)
             .build()
 }

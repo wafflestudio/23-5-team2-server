@@ -4,6 +4,7 @@ import com.wafflestudio.team2server.email.model.Email
 import com.wafflestudio.team2server.email.repository.EmailRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class EmailService(
@@ -23,7 +24,7 @@ class EmailService(
             emailRepository.delete(existingEmail)
         }
 
-        emailRepository.save(Email(userId = userId, email = emailAddress))
+        emailRepository.save(Email(userId = userId, email = emailAddress, createdAt = Instant.now(),))
     }
 
     fun getMyEmail(userId: Long): String? = emailRepository.findByUserId(userId)?.email

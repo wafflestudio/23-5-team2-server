@@ -20,7 +20,6 @@ class CseCrawlerService(
     private val articleRepository: ArticleRepository,
     private val articleService: ArticleService,
 ) : BaseCrawler(crawlerRepository, articleRepository, articleService) {
-    private val log = LoggerFactory.getLogger(this::class.java)
 
     override val listUrl = "https://cse.snu.ac.kr/community/notice"
     override val baseUrl = "https://cse.snu.ac.kr"
@@ -161,6 +160,6 @@ class CseCrawlerService(
 
     @Scheduled(fixedRate = 3600000)
     fun runScheduled() {
-//        crawl()
+        crawl()
     }
 }
