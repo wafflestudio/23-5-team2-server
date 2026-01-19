@@ -24,7 +24,7 @@ class EmailService(
             emailRepository.delete(existingEmail)
         }
 
-        emailRepository.save(Email(userId = userId, email = emailAddress, createdAt = Instant.now(),))
+        emailRepository.save(Email(userId = userId, email = emailAddress, createdAt = Instant.now()))
     }
 
     fun getMyEmail(userId: Long): String? = emailRepository.findByUserId(userId)?.email
