@@ -2,9 +2,10 @@ package com.wafflestudio.team2server.helper
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.service.ArticleService
-import com.wafflestudio.team2server.board.repository.BoardRepository
-import com.wafflestudio.team2server.inboxes.model.Inbox
-import com.wafflestudio.team2server.inboxes.repository.InboxRepository
+import com.wafflestudio.team2server.bookmark.model.Bookmark
+import com.wafflestudio.team2server.bookmark.repository.BookmarkRepository
+import com.wafflestudio.team2server.inbox.model.Inbox
+import com.wafflestudio.team2server.inbox.repository.InboxRepository
 import com.wafflestudio.team2server.subscription.model.Subscription
 import com.wafflestudio.team2server.subscription.repository.SubscriptionRepository
 import com.wafflestudio.team2server.user.JwtProvider
@@ -21,10 +22,10 @@ class DataGenerator(
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
     private val bcryptPasswordEncoder: BCryptPasswordEncoder,
-    private val boardRepository: BoardRepository,
     private val articleService: ArticleService,
     private val subscriptionRepository: SubscriptionRepository,
     private val inboxRepository: InboxRepository,
+    private val bookmarkRepository: BookmarkRepository,
 ) {
     fun generateUser(
         userId: String? = null,
@@ -73,4 +74,9 @@ class DataGenerator(
         val article = generateArticle(title = articleTitle)
         return inboxRepository.save(Inbox(userId = userId, articleId = article.id!!))
     }
+
+    fun generateBookmark(
+        userId: Long,
+        articleId: Long,
+    ): Bookmark = bookmarkRepository.save(Bookmark(userId = userId, articleId = articleId))
 }
