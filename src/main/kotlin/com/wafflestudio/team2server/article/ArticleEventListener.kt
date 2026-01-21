@@ -21,10 +21,10 @@ class ArticleEventListener(
 
         val recipients = emailService.getSubscriberEmails(article.boardId)
 
+        inboxService.createInboxesForBoardSubscribers(article)
+
         recipients.forEach { email ->
             mailService.sendArticleNotification(email, article)
         }
-
-        inboxService.createInboxesForBoardSubscribers(article)
     }
 }
