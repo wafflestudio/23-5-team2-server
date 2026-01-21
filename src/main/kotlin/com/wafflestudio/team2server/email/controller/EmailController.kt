@@ -1,5 +1,6 @@
 package com.wafflestudio.team2server.email.controller
 
+import com.wafflestudio.team2server.email.dto.EmailListResponse
 import com.wafflestudio.team2server.email.dto.EmailRequestAndResponse
 import com.wafflestudio.team2server.email.service.EmailService
 import com.wafflestudio.team2server.user.LoggedInUser
@@ -30,10 +31,10 @@ class EmailController(
     @GetMapping
     fun getMyEmails(
         @Parameter(hidden = true) @LoggedInUser user: User,
-    ): ResponseEntity<List<EmailRequestAndResponse>> {
+    ): ResponseEntity<EmailListResponse> {
         val emails = emailService.getMyEmails(user.id!!)
-        val response = emails.map { EmailRequestAndResponse(it.email) }
-        return ResponseEntity.ok(response)
+        val list = emails.map { EmailRequestAndResponse(it.email) }
+        return ResponseEntity.ok(EmailListResponse(list))
     }
 
     @DeleteMapping
