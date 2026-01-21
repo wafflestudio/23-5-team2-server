@@ -37,7 +37,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    post("/emails")
+                    post("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
@@ -45,7 +45,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    get("/emails")
+                    get("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token)),
                 ).andExpect(status().isOk)
                 .andExpect(jsonPath("$", hasSize<Any>(1)))
@@ -61,7 +61,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    post("/emails")
+                    post("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(email1)),
@@ -69,7 +69,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    post("/emails")
+                    post("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(email2)),
@@ -77,7 +77,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    get("/emails")
+                    get("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token)),
                 ).andExpect(status().isOk)
                 .andExpect(jsonPath("$", hasSize<Any>(2)))
@@ -92,7 +92,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    post("/emails")
+                    post("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
@@ -100,7 +100,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    delete("/emails")
+                    delete("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
@@ -108,7 +108,7 @@ class EmailTests
 
             mvc
                 .perform(
-                    get("/emails")
+                    get("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token)),
                 ).andExpect(status().isOk)
                 .andExpect(jsonPath("$", hasSize<Any>(0)))
