@@ -43,13 +43,14 @@ class EmailTests
                         .content(mapper.writeValueAsString(request)),
                 ).andExpect(status().isOk)
 
+            // 검증 로직 변경: $.emails 로 접근
             mvc
                 .perform(
                     get("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token)),
                 ).andExpect(status().isOk)
-                .andExpect(jsonPath("$", hasSize<Any>(1)))
-                .andExpect(jsonPath("$[0].email").value("test@snu.ac.kr"))
+                .andExpect(jsonPath("$.emails", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.emails[0].email").value("test@snu.ac.kr"))
         }
 
         @Test
@@ -75,14 +76,15 @@ class EmailTests
                         .content(mapper.writeValueAsString(email2)),
                 ).andExpect(status().isOk)
 
+            // 검증 로직 변경: $.emails 로 접근
             mvc
                 .perform(
                     get("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token)),
                 ).andExpect(status().isOk)
-                .andExpect(jsonPath("$", hasSize<Any>(2)))
-                .andExpect(jsonPath("$[0].email").value("first@snu.ac.kr"))
-                .andExpect(jsonPath("$[1].email").value("second@snu.ac.kr"))
+                .andExpect(jsonPath("$.emails", hasSize<Any>(2)))
+                .andExpect(jsonPath("$.emails[0].email").value("first@snu.ac.kr"))
+                .andExpect(jsonPath("$.emails[1].email").value("second@snu.ac.kr"))
         }
 
         @Test
@@ -104,13 +106,14 @@ class EmailTests
                         .cookie(Cookie("AUTH-TOKEN", token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
-                ).andExpect(status().isNoContent) // 204 No Content
+                ).andExpect(status().isNoContent)
 
+            // 검증 로직 변경: $.emails 사이즈 0 확인
             mvc
                 .perform(
                     get("/api/v1/emails")
                         .cookie(Cookie("AUTH-TOKEN", token)),
                 ).andExpect(status().isOk)
-                .andExpect(jsonPath("$", hasSize<Any>(0)))
+                .andExpect(jsonPath("$.emails", hasSize<Any>(0)))
         }
     }
