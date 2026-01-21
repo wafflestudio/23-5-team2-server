@@ -70,12 +70,12 @@ class BookmarkController(
             ApiResponse(responseCode = "401", description = "사용자 인증 실패 (유효하지 않은 토큰)"),
         ],
     )
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{bookmarkId}")
     fun deleteBookmark(
         @Parameter(hidden = true) @LoggedInUser user: User,
-        @Parameter(hidden = true) @PathVariable id: Long,
+        @Parameter(hidden = true) @PathVariable bookmarkId: Long,
     ): ResponseEntity<CountResponse> {
-        val cnt = bookmarkService.deleteBookmarkIfExist(user.id!!, id)
+        val cnt = bookmarkService.deleteBookmarkIfExist(user.id!!, bookmarkId)
         return ResponseEntity.ok(CountResponse(cnt))
     }
 }

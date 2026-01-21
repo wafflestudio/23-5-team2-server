@@ -6,13 +6,14 @@ data class ArticleWithBoard(
     val id: Long,
     @Embedded.Nullable(prefix = "board_")
     val board: Board?,
+    val title: String,
     val content: String,
     val author: String,
-    val title: String,
     val originLink: String?,
     val publishedAt: Instant,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val dislikes: Int,
 ) {
     data class Board(
         val id: Long,
