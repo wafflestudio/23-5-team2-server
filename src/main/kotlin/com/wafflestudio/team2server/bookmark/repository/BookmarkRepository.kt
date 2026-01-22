@@ -26,7 +26,9 @@ interface BookmarkRepository : ListCrudRepository<Bookmark, Long> {
 
         b.id            AS article_board_id,
         b.name          AS article_board_name,
-        b.source_url    AS article_board_source_url
+        b.source_url    AS article_board_source_url,
+    
+    (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS article_dislikes
     FROM bookmarks bm  
     LEFT JOIN articles a
         ON bm.article_id = a.id
