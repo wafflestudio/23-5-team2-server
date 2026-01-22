@@ -50,5 +50,6 @@ data class ArticleDto(
         createdAt = articleWithBoard.createdAt,
         updatedAt = articleWithBoard.updatedAt,
         dislikes = articleWithBoard.dislikes,
+        likes = articleWithBoard.likes,
     )
 }

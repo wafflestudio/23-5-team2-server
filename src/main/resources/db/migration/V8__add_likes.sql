@@ -1,9 +1,0 @@
-CREATE TABLE likes (
-                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          user_id BIGINT NOT NULL,
-                          article_id BIGINT NOT NULL,
-                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                          UNIQUE (article_id, user_id),
-                          FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-                          FOREIGN KEY (article_id) REFERENCES articles(id) ON UPDATE CASCADE ON DELETE CASCADE
-);
