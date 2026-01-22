@@ -22,7 +22,6 @@ class Article(
     var updatedAt: Instant? = null,
 )
 
-// Define the event record
 data class ArticleCreatedEvent(
     val article: Article,
 )

@@ -26,7 +26,8 @@ interface ArticleRepository : ListCrudRepository<Article, Long> {
         b.name              AS board_name,
         b.source_url        AS board_source_url,
         
-        (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS dislikes
+        (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS dislikes,
+        (SELECT COUNT(*) FROM likes d WHERE d.article_id = a.id) AS likes
     FROM articles a
     LEFT JOIN boards b
         ON a.board_id = b.id
@@ -54,7 +55,8 @@ SELECT
     b.name          AS board_name,
     b.source_url    AS board_source_url,
     
-    (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS dislikes
+    (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS dislikes,
+    (SELECT COUNT(*) FROM likes d WHERE d.article_id = a.id) AS likes
 FROM articles a
 LEFT JOIN boards b
     ON a.board_id = b.id
