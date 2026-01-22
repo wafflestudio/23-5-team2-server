@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val userService: UserService,
     private val jwtProvider: JwtProvider,
+    @Value("\${jwt.secure}") private val secure: Boolean,
 ) {
     @Operation(summary = "회원가입", description = "새로운 사용자를 등록합니다")
     @ApiResponses(
@@ -84,6 +86,8 @@ class AuthController(
                 .httpOnly(true)
                 .path("/")
                 .maxAge(0)
+                .sameSite("None")
+                .secure(secure)
                 .build()
         val headers = HttpHeaders()
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString())

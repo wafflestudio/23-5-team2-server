@@ -22,7 +22,9 @@ interface ArticleRepository : ListCrudRepository<Article, Long> {
 
         b.id                AS board_id,
         b.name              AS board_name,
-        b.source_url        AS board_source_url
+        b.source_url        AS board_source_url,
+        
+        (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS dislikes
     FROM articles a
     LEFT JOIN boards b
         ON a.board_id = b.id
@@ -47,7 +49,9 @@ SELECT
 
     b.id            AS board_id,
     b.name          AS board_name,
-    b.source_url    AS board_source_url
+    b.source_url    AS board_source_url,
+    
+    (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS dislikes
 FROM articles a
 LEFT JOIN boards b
     ON a.board_id = b.id
@@ -75,4 +79,11 @@ LIMIT :limit
     fun existsByOriginLink(originLink: String): Boolean
 
     fun deleteAllByBoardId(boardId: Long)
+
+    @Query("SELECT * FROM articles WHERE id = :id FOR UPDATE")
+    fun findByIdForUpdate(
+        @Param("id") id: Long,
+    ): Article?
+
+    // Do not use save directly. Instead, use ArticleService.saveNewArticle. It triggers ArticleCreatedEvent and the inbox adding logic.
 }

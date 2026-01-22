@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,7 +38,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없음"),
         ],
     )
-    @PostMapping("/boards/1/articles")
+    @PostMapping("/articles")
     fun create(
         @RequestBody createArticleRequest: CreateArticleRequest,
     ): ResponseEntity<CreateArticleResponse> {
@@ -47,10 +48,10 @@ class ArticleController(
                 title = createArticleRequest.title,
                 author = createArticleRequest.author,
                 originLink = createArticleRequest.originLink,
-                publihedAt = createArticleRequest.publishedAt,
+                publishedAt = createArticleRequest.publishedAt,
                 boardId = 1,
             )
-        return ResponseEntity.ok(articleDto)
+        return ResponseEntity.status(HttpStatus.CREATED).body(articleDto)
     }
 
     @Operation(

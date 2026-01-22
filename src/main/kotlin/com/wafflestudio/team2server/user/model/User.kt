@@ -8,7 +8,7 @@ import java.time.Instant
 
 @Table("users")
 class User(
-    @Id var id: Long? = null,
+    @Id val id: Long? = null,
     var localId: String? = null,
     var password: String? = null,
     var oauthId: String? = null,

@@ -7,7 +7,7 @@ import java.time.Instant
 
 @Table("image_metadata")
 class ImageMetadata(
-    @Id var id: Long? = null,
+    @Id val id: Long? = null,
     var authorId: Long? = null,
     var articleId: Long? = null,
     var url: String,
