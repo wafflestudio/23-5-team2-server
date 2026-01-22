@@ -19,6 +19,7 @@ interface BookmarkRepository : ListCrudRepository<Bookmark, Long> {
         a.title         AS article_title,
         a.content       AS article_content,
         a.author        AS article_author,
+        a.views         AS article_views,
         a.origin_link   AS article_origin_link,
         a.published_at  AS article_published_at,
         a.created_at    AS article_created_at,

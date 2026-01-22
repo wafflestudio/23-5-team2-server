@@ -17,6 +17,7 @@ import com.wafflestudio.team2server.board.repository.BoardRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
@@ -25,7 +26,11 @@ class ArticleService(
     private val boardRepository: BoardRepository,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
+    @Transactional
     fun get(articleId: Long): ArticleDto {
+        val updated = articleRepository.increaseViews(articleId)
+        if (updated == 0) throw ArticleNotFoundException()
+
         val articleWithBoard =
             articleRepository.findByIdWithBoard(articleId)
                 ?: throw ArticleNotFoundException()
