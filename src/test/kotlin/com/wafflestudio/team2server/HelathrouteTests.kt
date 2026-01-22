@@ -23,6 +23,7 @@ class HelathrouteTests(
     @Test
     fun health_is_up() {
         // healthroute 정상작동한다
+
         mvc
             .perform(get("/actuator/health"))
             .andExpect(status().isOk)

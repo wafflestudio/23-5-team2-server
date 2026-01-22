@@ -1,5 +1,4 @@
 jwt:
-  secure: true
 
 # AWS S3
 cloud:

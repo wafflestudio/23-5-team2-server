@@ -5,12 +5,15 @@
 
 루트 경로에 다음의 `.env` 파일을 작성합니다.
 
-| Key Name               | Description               |
-|------------------------|---------------------------|
-| `GOOGLE_CLIENT_ID`     | 구글 OAuth2 Client ID       |
-| `GOOGLE_CLIENT_SECRET` | 구글 OAuth2 Client Secret   |
-| `AWS_S3_ACCESS_KEY`    | AWS S3 ACCESS KEY         |
-| `AWS_S3_SECRET_KEY`    | AWS S3 SECRET KEY         |
+| Key Name               | Description             |
+|------------------------|-------------------------|
+| `GOOGLE_CLIENT_ID`     | 구글 OAuth2 Client ID     |
+| `GOOGLE_CLIENT_SECRET` | 구글 OAuth2 Client Secret |
+| `AWS_S3_ACCESS_KEY`    | AWS S3 ACCESS KEY       |
+| `AWS_S3_SECRET_KEY`    | AWS S3 SECRET KEY       |
+| `MAIL_USERNAME`        | MAIL_USERNAME           |
+| `MAIL_PASSWORD`        | MAIL_PASSWORD           |
+
 
 # Auth
 
