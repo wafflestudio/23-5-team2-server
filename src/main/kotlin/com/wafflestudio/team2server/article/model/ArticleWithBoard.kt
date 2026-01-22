@@ -14,6 +14,7 @@ data class ArticleWithBoard(
     val createdAt: Instant,
     val updatedAt: Instant,
     val dislikes: Int,
+    val views: Int,
 ) {
     data class Board(
         val id: Long,

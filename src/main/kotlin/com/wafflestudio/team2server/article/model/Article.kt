@@ -15,6 +15,7 @@ class Article(
     var title: String,
     var originLink: String?,
     var publishedAt: Instant,
+    var views: Int = 0,
     @CreatedDate
     var createdAt: Instant? = null,
     @LastModifiedDate

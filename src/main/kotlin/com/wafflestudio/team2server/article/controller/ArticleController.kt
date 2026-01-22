@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/articles")
 @Tag(name = "Article", description = "게시글 관리 API")
 class ArticleController(
     private val articleService: ArticleService,
@@ -38,7 +38,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없음"),
         ],
     )
-    @PostMapping("/articles")
+    @PostMapping
     fun create(
         @RequestBody createArticleRequest: CreateArticleRequest,
     ): ResponseEntity<CreateArticleResponse> {
@@ -68,7 +68,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없음"),
         ],
     )
-    @GetMapping("/articles")
+    @GetMapping
     fun paging(
         @Parameter(
             description = "게시판 ID",
@@ -114,7 +114,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없습니다."),
         ],
     )
-    @GetMapping("/articles/{articleId}")
+    @GetMapping("/{articleId}")
     fun get(
         @Parameter(
             description = "게시글 ID",
@@ -133,7 +133,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없습니다."),
         ],
     )
-    @PatchMapping("/articles/{articleId}")
+    @PatchMapping("/{articleId}")
     fun update(
         @Parameter(
             description = "게시글 ID",
@@ -161,7 +161,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없습니다."),
         ],
     )
-    @DeleteMapping("/articles/{articleId}")
+    @DeleteMapping("/{articleId}")
     fun delete(
         @Parameter(
             description = "게시글 ID",
