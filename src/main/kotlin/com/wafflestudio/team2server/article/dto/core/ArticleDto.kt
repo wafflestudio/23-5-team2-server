@@ -18,6 +18,7 @@ data class ArticleDto(
     val updatedAt: Instant,
     val dislikes: Int = 0,
     val likes: Int = 0,
+    val views: Int = 0,
 ) {
     constructor(article: Article, board: Board) : this(
         id = article.id!!,
@@ -25,6 +26,7 @@ data class ArticleDto(
         title = article.title,
         content = article.content,
         author = article.author,
+        views = article.views,
         originLink = article.originLink,
         publishedAt = article.publishedAt,
         createdAt = article.createdAt!!,
@@ -42,11 +44,11 @@ data class ArticleDto(
         title = articleWithBoard.title,
         content = articleWithBoard.content,
         author = articleWithBoard.author,
+        views = articleWithBoard.views,
         originLink = articleWithBoard.originLink,
         publishedAt = articleWithBoard.publishedAt,
         createdAt = articleWithBoard.createdAt,
         updatedAt = articleWithBoard.updatedAt,
         dislikes = articleWithBoard.dislikes,
-        likes = articleWithBoard.likes,
     )
 }

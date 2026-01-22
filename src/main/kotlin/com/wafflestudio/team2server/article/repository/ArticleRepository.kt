@@ -2,6 +2,7 @@ package com.wafflestudio.team2server.article.repository
 
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.model.ArticleWithBoard
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.ListCrudRepository
 import org.springframework.data.repository.query.Param
@@ -15,6 +16,7 @@ interface ArticleRepository : ListCrudRepository<Article, Long> {
         a.content           AS content,
         a.author            AS author,
         a.title             AS title,
+        a.views             AS views,
         a.origin_link       AS origin_link,
         a.published_at      AS published_at,
         a.created_at        AS created_at,
@@ -43,6 +45,7 @@ SELECT
     a.title         AS title,
     a.content       AS content,
     a.author        AS author,
+    a.views         AS views,
     a.origin_link   AS origin_link,
     a.published_at  AS published_at,
     a.created_at    AS created_at,
@@ -88,4 +91,10 @@ LIMIT :limit
     ): Article?
 
     // Do not use save directly. Instead, use ArticleService.saveNewArticle. It triggers ArticleCreatedEvent and the inbox adding logic.
+
+    @Modifying
+    @Query("UPDATE articles SET views = views + 1 WHERE id = :articleId")
+    fun increaseViews(
+        @Param("articleId") articleId: Long,
+    ): Int
 }

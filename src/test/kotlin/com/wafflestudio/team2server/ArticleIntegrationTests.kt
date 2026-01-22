@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
+import java.util.concurrent.Executors
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -250,6 +251,33 @@ class ArticleIntegrationTests
                 ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.data", hasSize<Any>(1)))
                 .andExpect(jsonPath("$.data[0].title").value(containsString("waffle")))
+        }
+
+        @Test
+        fun `should increase views by number of detail get requests`() {
+            val threadPool = Executors.newFixedThreadPool(4)
+            val article = dataGenerator.generateArticle()
+
+            val jobs =
+                List(4) {
+                    threadPool.submit {
+                        mvc
+                            .perform(
+                                get("/api/v1/articles/{articleId}", article.id)
+                                    .contentType(MediaType.APPLICATION_JSON),
+                            ).andExpect(status().isOk)
+                    }
+                }
+            jobs.forEach { it.get() }
+
+            mvc
+                .perform(
+                    get("/api/v1/articles")
+                        .contentType(MediaType.APPLICATION_JSON),
+                ).andExpect(status().isOk)
+                .andExpect(
+                    jsonPath("$.data[?(@.id == ${article.id})].views").value(4),
+                )
         }
 
         private fun assertArticlesAreSorted(articles: List<ArticleDto>) {
