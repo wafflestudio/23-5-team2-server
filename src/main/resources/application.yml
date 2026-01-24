@@ -12,6 +12,22 @@ spring:
     password: ${DB_PASSWORD:secret}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
   # Google OAuth2
   security:
     oauth2:
@@ -24,12 +40,11 @@ spring:
 
 app:
   frontend:
-    url: http://localhost:5173,https://localhost:5173,https://d2sajtt7b5xbu6.cloudfront.net
+    url: http://localhost:5173,https://localhost:5173,http://localhost:8080,https://d2sajtt7b5xbu6.cloudfront.net
 
 jwt:
   secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-jwt-token-generation}
   expiration-in-ms: 86400000
-  secure: false
 
 # Actuator Health
 management:
@@ -42,6 +57,9 @@ management:
       probes:
         enabled: true
       show-details: never
+  health:
+    mail:
+      enabled: false
 
 # AWS S3
 cloud:

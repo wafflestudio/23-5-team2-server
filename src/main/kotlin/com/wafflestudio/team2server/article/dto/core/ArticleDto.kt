@@ -17,6 +17,7 @@ data class ArticleDto(
     val createdAt: Instant,
     val updatedAt: Instant,
     val dislikes: Int = 0,
+    val likes: Int = 0,
     val views: Int = 0,
 ) {
     constructor(article: Article, board: Board) : this(
@@ -49,5 +50,6 @@ data class ArticleDto(
         createdAt = articleWithBoard.createdAt,
         updatedAt = articleWithBoard.updatedAt,
         dislikes = articleWithBoard.dislikes,
+        likes = articleWithBoard.likes,
     )
 }

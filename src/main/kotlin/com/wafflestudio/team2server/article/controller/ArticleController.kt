@@ -114,7 +114,8 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시판을 찾을 수 없습니다."),
         ],
     )
-    @GetMapping("/{articleId}")
+    @GetMapping("/{articleId: \\d+}")
+    //정수만 입력 받도록 설정
     fun get(
         @Parameter(
             description = "게시글 ID",
@@ -133,7 +134,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없습니다."),
         ],
     )
-    @PatchMapping("/{articleId}")
+    @PatchMapping("/{articleId:\\d+}")
     fun update(
         @Parameter(
             description = "게시글 ID",
@@ -161,7 +162,7 @@ class ArticleController(
             ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없습니다."),
         ],
     )
-    @DeleteMapping("/{articleId}")
+    @DeleteMapping("/{articleId:\\d+}")
     fun delete(
         @Parameter(
             description = "게시글 ID",
@@ -172,4 +173,6 @@ class ArticleController(
         articleService.delete(articleId)
         return ResponseEntity.noContent().build()
     }
+    @GetMapping("/hots")
+    fun hots():
 }

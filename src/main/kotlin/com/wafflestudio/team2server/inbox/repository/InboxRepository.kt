@@ -31,7 +31,8 @@ interface InboxRepository : ListCrudRepository<Inbox, Long> {
         b.name          AS article_board_name,
         b.source_url    AS article_board_source_url,
     
-    (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS article_dislikes
+    (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS article_dislikes,
+    (SELECT COUNT(*) FROM likes d WHERE d.article_id = a.id) AS article_likes
     FROM inboxes i  
     LEFT JOIN articles a
         ON i.article_id = a.id
