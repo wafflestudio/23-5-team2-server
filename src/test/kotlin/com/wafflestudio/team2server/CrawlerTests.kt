@@ -3,6 +3,7 @@ package com.wafflestudio.team2server
 import com.wafflestudio.team2server.crawler.service.CareerCrawlerService
 import com.wafflestudio.team2server.crawler.service.CseCrawlerService
 import com.wafflestudio.team2server.crawler.service.MysnuCrawlerService
+import com.wafflestudio.team2server.crawler.service.SnutiCrawlerService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
@@ -37,11 +38,15 @@ class CrawlerTests
         @MockitoBean
         private lateinit var careerCrawlerService: CareerCrawlerService
 
+        @MockitoBean
+        private lateinit var snutiCrawlerService: SnutiCrawlerService
+
         @Test
         fun `succeed on calling crawler service`() {
             given(mysnuCrawlerService.code).willReturn("mysnu")
             given(cseCrawlerService.code).willReturn("cse")
             given(careerCrawlerService.code).willReturn("career")
+            given(snutiCrawlerService.code).willReturn("snuti")
 
             mvc
                 .perform(
@@ -55,10 +60,15 @@ class CrawlerTests
                 .perform(
                     post("/api/crawlers/career/run"),
                 ).andExpect(status().isOk)
+            mvc
+                .perform(
+                    post("/api/crawlers/snuti/run"),
+                ).andExpect(status().isOk)
 
             verify(mysnuCrawlerService).crawl()
             verify(cseCrawlerService).crawl()
             verify(careerCrawlerService).crawl()
+            verify(snutiCrawlerService).crawl()
         }
 
         @Test
@@ -68,7 +78,7 @@ class CrawlerTests
                     get("/api/crawlers"),
                 ).andDo(print())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.count").isNumber)
+                .andExpect(jsonPath("$.count").value(4))
                 .andExpect(jsonPath("$.results").isArray)
                 .andExpect(jsonPath("$.results[0].boardName").exists())
         }
