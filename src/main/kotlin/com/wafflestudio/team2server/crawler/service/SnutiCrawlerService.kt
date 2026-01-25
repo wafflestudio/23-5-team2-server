@@ -51,7 +51,6 @@ class SnutiCrawlerService(
         title: String,
     ): Article {
         val content = detailDoc.select("div.board_view_content").html()
-        println(detailDoc)
 
         var author = detailDoc.select("span.writer").text().trim()
         if (author.isEmpty()) {
@@ -87,9 +86,6 @@ class SnutiCrawlerService(
                 .connect(url)
                 .userAgent("Mozilla/5.0")
                 .get()
-
-        println(url)
-        println(firstPage)
 
         // 2. Locate the script containing the redirection call
         // We search for the script tag that calls go_board_view
@@ -127,7 +123,6 @@ class SnutiCrawlerService(
                 .data("search_task", "ALL")
                 .method(Connection.Method.POST)
                 .post()
-        println(realPage)
         return realPage
     }
 
