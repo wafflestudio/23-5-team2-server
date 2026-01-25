@@ -134,7 +134,7 @@ WHERE
 
 ORDER BY a.published_at DESC, a.id DESC
 LIMIT :limit
-"""
+""",
     )
     fun findHotsWithCursor(
         @Param("keyword") keyword: String?,
@@ -144,5 +144,4 @@ LIMIT :limit
         @Param("hotScore") hotScore: Long,
         @Param("viewsWeight") viewsWeight: Double,
     ): List<ArticleWithBoard>
-
 }

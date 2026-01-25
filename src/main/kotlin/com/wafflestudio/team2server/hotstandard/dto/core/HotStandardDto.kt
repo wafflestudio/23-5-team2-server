@@ -1,7 +1,7 @@
 package com.wafflestudio.team2server.hotstandard.dto.core
 
-class HotStandardDto (
+class HotStandardDto(
     val id: Long,
     val hotScore: Long,
     val viewsWeight: Double,
-    )
+)

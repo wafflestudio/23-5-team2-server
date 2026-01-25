@@ -18,7 +18,6 @@ import com.wafflestudio.team2server.board.BoardNotFoundException
 import com.wafflestudio.team2server.board.repository.BoardRepository
 import com.wafflestudio.team2server.hotstandard.dto.core.HotStandardDto
 import com.wafflestudio.team2server.hotstandard.repository.HotStandardRepository
-import org.apache.catalina.core.StandardService
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -72,8 +71,9 @@ class ArticleService(
                 nextId,
                 queryLimit,
             )
-        return paging(articleWithBoards,limit)
+        return paging(articleWithBoards, limit)
     }
+
     fun pageByHots(
         keyword: String?,
         nextPublishedAt: Instant?,
@@ -92,7 +92,7 @@ class ArticleService(
                 hotScore = standard.hotScore,
                 viewsWeight = standard.viewsWeight,
             )
-        return paging(articleWithBoards,limit)
+        return paging(articleWithBoards, limit)
     }
 
     fun create(
@@ -175,6 +175,7 @@ class ArticleService(
         eventPublisher.publishEvent(ArticleCreatedEvent(savedArticle))
         return savedArticle
     }
+
     fun paging(
         articleList: List<ArticleWithBoard>,
         limit: Int,
@@ -190,17 +191,24 @@ class ArticleService(
             ArticlePaging(newNextPublishedAt?.toEpochMilli(), newNextId, hasNext),
         )
     }
+
     fun hotsUpdate(
         hotScore: Long?,
         viewsWeight: Double?,
-    ): HotStandardDto{
-        val standard = hotStandardRepository.findByIdOrNull(1L) ?: throw StandardNotFoundException()
+    ): HotStandardDto {
+        val standard =
+            hotStandardRepository.findByIdOrNull(1L)
+                ?: throw StandardNotFoundException()
+
         hotScore?.let { standard.hotScore = it }
-        viewsWeight?.let {standard.viewsWeight = it}
+        viewsWeight?.let { standard.viewsWeight = it }
+
+        val saved = hotStandardRepository.save(standard)
+
         return HotStandardDto(
-            id = standard.id!!,
-            hotScore = hotScore!!,
-            viewsWeight = viewsWeight!!,
+            id = saved.id!!,
+            hotScore = saved.hotScore,
+            viewsWeight = saved.viewsWeight,
         )
     }
 }

@@ -7,7 +7,6 @@ import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.dto.response.CreateArticleResponse
 import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.hotstandard.dto.core.HotStandardDto
-import com.wafflestudio.team2server.hotstandard.model.HotStandard
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -37,7 +36,7 @@ class ArticleController(
         value = [
             ApiResponse(responseCode = "200", description = "핫 게시판 조회 성공"),
             ApiResponse(responseCode = "404", description = "기준이 정해지지 않았습니다"),
-        ]
+        ],
     )
     @GetMapping("/hots")
     fun hots(
@@ -55,7 +54,7 @@ class ArticleController(
             description = "페이지당 게시글 수",
             example = "20",
         ) @RequestParam(value = "limit", defaultValue = "20") limit: Int,
-    ): ResponseEntity<ArticlePagingResponse>{
+    ): ResponseEntity<ArticlePagingResponse> {
         val articlePagingResponse =
             articleService.pageByHots(
                 keyword = keyword,
@@ -65,26 +64,30 @@ class ArticleController(
             )
         return ResponseEntity.ok(articlePagingResponse)
     }
+
     @Operation(summary = "기준 바꾸기", description = "기준 바꿔주기")
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "기준 바꾸기 성공")
+        ApiResponse(responseCode = "200", description = "기준 바꾸기 성공"),
     )
     @PatchMapping("/hots")
     fun hotsUpdate(
         @Parameter(
             description = "총 점수 기준",
-            example="10",
+            example = "10",
         )@RequestParam(value = "hotScore", required = false) hotScore: Long?,
         @Parameter(
             description = "조회수 가중치",
-            example="1.0",
+            example = "1.0",
         )@RequestParam(value = "viewsWeight", required = false) viewsWeight: kotlin.Double?,
-    ): ResponseEntity<HotStandardDto>{
-        val hotStandardDto = articleService.hotsUpdate(
-            hotScore, viewsWeight
-        )
+    ): ResponseEntity<HotStandardDto> {
+        val hotStandardDto =
+            articleService.hotsUpdate(
+                hotScore,
+                viewsWeight,
+            )
         return ResponseEntity.ok(hotStandardDto)
     }
+
     @Operation(summary = "게시글 생성", description = "게시판에 글이 작성되는지 확인.")
     @ApiResponses(
         value = [
@@ -162,6 +165,7 @@ class ArticleController(
         return ResponseEntity.ok(articlePagingResponse)
     }
 
+    // 정수만 입력 받도록 설정
     @Operation(summary = "특정 게시글 조회", description = "게시글 ID로 게시글 상세 정보 조회")
     @ApiResponses(
         value = [
@@ -170,7 +174,6 @@ class ArticleController(
         ],
     )
     @GetMapping("/{articleId}")
-    //정수만 입력 받도록 설정
     fun get(
         @Parameter(
             description = "게시글 ID",
