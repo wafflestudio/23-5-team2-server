@@ -52,3 +52,9 @@ class ArticleBlankTitleException :
         httpStatusCode = HttpStatus.BAD_REQUEST,
         msg = "Title must not be blank",
     )
+class StandardNotFoundException :
+    ArticleException(
+        errorCode = 0,
+        httpStatusCode = HttpStatus.BAD_REQUEST,
+        msg = "hotStandard not found(by id = 1L)",
+    )
