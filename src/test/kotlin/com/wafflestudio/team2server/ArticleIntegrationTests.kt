@@ -280,6 +280,43 @@ class ArticleIntegrationTests
                 )
         }
 
+        @Test
+        fun `should promote article to hot board based on view count`() {
+            val article = dataGenerator.generateArticle()
+
+            mvc
+                .perform(
+                    get("/api/v1/articles/hots")
+                        .param("limit", "20")
+                        .contentType(MediaType.APPLICATION_JSON),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.data[?(@.id == ${article.id})]").isEmpty)
+
+            repeat(5) {
+                mvc
+                    .perform(
+                        get("/api/v1/articles/{articleId}", article.id)
+                            .contentType(MediaType.APPLICATION_JSON),
+                    ).andExpect(status().isOk)
+            }
+
+            mvc
+                .perform(
+                    patch("/api/v1/articles/hots")
+                        .param("hotScore", "4")
+                        .contentType(MediaType.APPLICATION_JSON),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.hotScore").value(4))
+
+            mvc
+                .perform(
+                    get("/api/v1/articles/hots")
+                        .param("limit", "20")
+                        .contentType(MediaType.APPLICATION_JSON),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.data[?(@.id == ${article.id})]").isNotEmpty)
+        }
+
         private fun assertArticlesAreSorted(articles: List<ArticleDto>) {
             if (articles.size <= 1) return
             articles.zipWithNext().forEach { (current, next) ->

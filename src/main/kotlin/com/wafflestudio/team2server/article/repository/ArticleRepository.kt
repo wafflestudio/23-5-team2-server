@@ -97,4 +97,52 @@ LIMIT :limit
     fun increaseViews(
         @Param("articleId") articleId: Long,
     ): Int
+
+    @Query(
+        """
+SELECT
+    a.id            AS id,
+    a.title         AS title,
+    a.content       AS content,
+    a.author        AS author,
+    a.views         AS views,
+    a.origin_link   AS origin_link,
+    a.published_at  AS published_at,
+    a.created_at    AS created_at,
+    a.updated_at    AS updated_at,
+
+    b.id            AS board_id,
+    b.name          AS board_name,
+    b.source_url    AS board_source_url,
+    
+    (SELECT COUNT(*) FROM dislikes d WHERE d.article_id = a.id) AS dislikes,
+    (SELECT COUNT(*) FROM likes l WHERE l.article_id = a.id) AS likes
+FROM articles a
+LEFT JOIN boards b
+    ON a.board_id = b.id
+WHERE
+  (
+      :keyword IS NULL
+      OR a.title LIKE CONCAT('%', :keyword, '%')
+      OR a.content LIKE CONCAT('%', :keyword, '%')
+  )
+  AND a.views >= (:hotScore / :viewsWeight)
+
+  AND (
+      :nextPublishedAt IS NULL
+      OR (a.published_at, a.id) < (:nextPublishedAt, :nextId)
+  )
+
+ORDER BY a.published_at DESC, a.id DESC
+LIMIT :limit
+""",
+    )
+    fun findHotsWithCursor(
+        @Param("keyword") keyword: String?,
+        @Param("nextPublishedAt") nextPublishedAt: Instant?,
+        @Param("nextId") nextId: Long?,
+        @Param("limit") limit: Int,
+        @Param("hotScore") hotScore: Long,
+        @Param("viewsWeight") viewsWeight: Double,
+    ): List<ArticleWithBoard>
 }

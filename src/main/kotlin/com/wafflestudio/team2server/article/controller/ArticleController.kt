@@ -6,6 +6,7 @@ import com.wafflestudio.team2server.article.dto.request.CreateArticleRequest
 import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.dto.response.CreateArticleResponse
 import com.wafflestudio.team2server.article.service.ArticleService
+import com.wafflestudio.team2server.hotstandard.dto.core.HotStandardDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -30,6 +31,63 @@ import java.time.Instant
 class ArticleController(
     private val articleService: ArticleService,
 ) {
+    @Operation(summary = "핫 게시판 조회", description = "핫 게시판 불러오기")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "핫 게시판 조회 성공"),
+            ApiResponse(responseCode = "404", description = "기준이 정해지지 않았습니다"),
+        ],
+    )
+    @GetMapping("/hots")
+    fun hots(
+        @Parameter(
+            description = "키워드 필터",
+            example = "장학",
+        )@RequestParam(value = "keyword", required = false) keyword: String?,
+        @Parameter(
+            description = "다음 페이지 커서 - 이전 응답의 마지막 게시글 생성 시간 (Unix timestamp, milliseconds)",
+        ) @RequestParam(value = "nextPublishedAt", required = false) nextPublishedAt: Long?,
+        @Parameter(
+            description = "다음 페이지 커서 - 이전 응답의 마지막 게시글 ID (nextPublishedAt와 함께 사용)",
+        ) @RequestParam(value = "nextId", required = false) nextId: Long?,
+        @Parameter(
+            description = "페이지당 게시글 수",
+            example = "20",
+        ) @RequestParam(value = "limit", defaultValue = "20") limit: Int,
+    ): ResponseEntity<ArticlePagingResponse> {
+        val articlePagingResponse =
+            articleService.pageByHots(
+                keyword = keyword,
+                nextPublishedAt = nextPublishedAt?.let { Instant.ofEpochMilli(it) },
+                nextId = nextId,
+                limit = limit,
+            )
+        return ResponseEntity.ok(articlePagingResponse)
+    }
+
+    @Operation(summary = "기준 바꾸기", description = "기준 바꿔주기")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "기준 바꾸기 성공"),
+    )
+    @PatchMapping("/hots")
+    fun hotsUpdate(
+        @Parameter(
+            description = "총 점수 기준",
+            example = "10",
+        )@RequestParam(value = "hotScore", required = false) hotScore: Long?,
+        @Parameter(
+            description = "조회수 가중치",
+            example = "1.0",
+        )@RequestParam(value = "viewsWeight", required = false) viewsWeight: kotlin.Double?,
+    ): ResponseEntity<HotStandardDto> {
+        val hotStandardDto =
+            articleService.hotsUpdate(
+                hotScore,
+                viewsWeight,
+            )
+        return ResponseEntity.ok(hotStandardDto)
+    }
+
     @Operation(summary = "게시글 생성", description = "게시판에 글이 작성되는지 확인.")
     @ApiResponses(
         value = [
@@ -107,6 +165,7 @@ class ArticleController(
         return ResponseEntity.ok(articlePagingResponse)
     }
 
+    // 정수만 입력 받도록 설정
     @Operation(summary = "특정 게시글 조회", description = "게시글 ID로 게시글 상세 정보 조회")
     @ApiResponses(
         value = [

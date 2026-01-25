@@ -6,14 +6,18 @@ import com.wafflestudio.team2server.article.ArticleBlankOriginLinkException
 import com.wafflestudio.team2server.article.ArticleBlankPublishedException
 import com.wafflestudio.team2server.article.ArticleBlankTitleException
 import com.wafflestudio.team2server.article.ArticleNotFoundException
+import com.wafflestudio.team2server.article.StandardNotFoundException
 import com.wafflestudio.team2server.article.dto.ArticlePaging
 import com.wafflestudio.team2server.article.dto.core.ArticleDto
 import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.model.Article
 import com.wafflestudio.team2server.article.model.ArticleCreatedEvent
+import com.wafflestudio.team2server.article.model.ArticleWithBoard
 import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.board.BoardNotFoundException
 import com.wafflestudio.team2server.board.repository.BoardRepository
+import com.wafflestudio.team2server.hotstandard.dto.core.HotStandardDto
+import com.wafflestudio.team2server.hotstandard.repository.HotStandardRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -25,6 +29,7 @@ class ArticleService(
     private val articleRepository: ArticleRepository,
     private val boardRepository: BoardRepository,
     private val eventPublisher: ApplicationEventPublisher,
+    private val hotStandardRepository: HotStandardRepository,
 ) {
     @Transactional
     fun get(articleId: Long): ArticleDto {
@@ -66,17 +71,28 @@ class ArticleService(
                 nextId,
                 queryLimit,
             )
+        return paging(articleWithBoards, limit)
+    }
 
-        val hasNext = articleWithBoards.size > limit
-        val pageArticles = if (hasNext) articleWithBoards.subList(0, limit) else articleWithBoards
-
-        val newNextPublishedAt = if (hasNext) pageArticles.last().publishedAt else null
-        val newNextId = if (hasNext) pageArticles.last().id else null
-
-        return ArticlePagingResponse(
-            pageArticles.map { ArticleDto(it) },
-            ArticlePaging(newNextPublishedAt?.toEpochMilli(), newNextId, hasNext),
-        )
+    fun pageByHots(
+        keyword: String?,
+        nextPublishedAt: Instant?,
+        nextId: Long?,
+        limit: Int,
+    ): ArticlePagingResponse {
+        val keyword = keyword?.trim()?.takeIf { it.isNotEmpty() }
+        val queryLimit = limit + 1
+        val standard = hotStandardRepository.findByIdOrNull(1L) ?: throw StandardNotFoundException()
+        val articleWithBoards =
+            articleRepository.findHotsWithCursor(
+                keyword = keyword,
+                nextPublishedAt = nextPublishedAt,
+                nextId = nextId,
+                limit = queryLimit,
+                hotScore = standard.hotScore,
+                viewsWeight = standard.viewsWeight,
+            )
+        return paging(articleWithBoards, limit)
     }
 
     fun create(
@@ -158,5 +174,41 @@ class ArticleService(
         val savedArticle = articleRepository.save(article)
         eventPublisher.publishEvent(ArticleCreatedEvent(savedArticle))
         return savedArticle
+    }
+
+    fun paging(
+        articleList: List<ArticleWithBoard>,
+        limit: Int,
+    ): ArticlePagingResponse {
+        val hasNext = articleList.size > limit
+        val pageArticles = if (hasNext) articleList.subList(0, limit) else articleList
+
+        val newNextPublishedAt = if (hasNext) pageArticles.last().publishedAt else null
+        val newNextId = if (hasNext) pageArticles.last().id else null
+
+        return ArticlePagingResponse(
+            pageArticles.map { ArticleDto(it) },
+            ArticlePaging(newNextPublishedAt?.toEpochMilli(), newNextId, hasNext),
+        )
+    }
+
+    fun hotsUpdate(
+        hotScore: Long?,
+        viewsWeight: Double?,
+    ): HotStandardDto {
+        val standard =
+            hotStandardRepository.findByIdOrNull(1L)
+                ?: throw StandardNotFoundException()
+
+        hotScore?.let { standard.hotScore = it }
+        viewsWeight?.let { standard.viewsWeight = it }
+
+        val saved = hotStandardRepository.save(standard)
+
+        return HotStandardDto(
+            id = saved.id!!,
+            hotScore = saved.hotScore,
+            viewsWeight = saved.viewsWeight,
+        )
     }
 }
