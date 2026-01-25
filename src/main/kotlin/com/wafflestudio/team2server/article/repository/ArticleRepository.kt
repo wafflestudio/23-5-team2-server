@@ -126,7 +126,8 @@ WHERE
       OR a.title LIKE CONCAT('%', :keyword, '%')
       OR a.content LIKE CONCAT('%', :keyword, '%')
   )
-  AND (a.views * :viewsWeight) >= :hotScore
+  AND a.views >= (:hotScore / :viewsWeight)
+
   AND (
       :nextPublishedAt IS NULL
       OR (a.published_at, a.id) < (:nextPublishedAt, :nextId)

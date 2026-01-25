@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("hotstandards")
 data class HotStandard(
     @Id
-    var id: Long? = null,
+    val id: Long? = null,
     var hotScore: Long,
     var viewsWeight: Double,
 )
