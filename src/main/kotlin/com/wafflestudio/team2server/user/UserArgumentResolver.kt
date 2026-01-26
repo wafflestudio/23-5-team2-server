@@ -14,16 +14,23 @@ class UserArgumentResolver(
     private val userRepository: UserRepository,
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean =
-        parameter.hasParameterAnnotation(LoggedInUser::class.java) && parameter.parameterType == User::class.java
+        (parameter.hasParameterAnnotation(LoggedInUser::class.java) && parameter.parameterType == User::class.java) ||
+            (parameter.hasParameterAnnotation(AdminUser::class.java) && parameter.parameterType == User::class.java)
 
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
-    ): User =
-        runCatching {
-            val userId = webRequest.getAttribute("userId", 0) as Long
-            userRepository.findById(userId)
-        }.getOrNull()?.orElseThrow { AuthenticateException() } ?: throw AuthenticateException()
+    ): User {
+        val user =
+            runCatching {
+                val userId = webRequest.getAttribute("userId", 0) as Long
+                userRepository.findById(userId)
+            }.getOrNull()?.orElseThrow { AuthenticateException() } ?: throw AuthenticateException()
+        if (parameter.hasParameterAnnotation(AdminUser::class.java) && user.role < 1000) {
+            throw AdminRequiredException()
+        }
+        return user
+    }
 }

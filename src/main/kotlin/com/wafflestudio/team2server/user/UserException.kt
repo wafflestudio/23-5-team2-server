@@ -39,6 +39,13 @@ class AuthenticateException :
         msg = "Authenticate failed",
     )
 
+class AdminRequiredException :
+    UserException(
+        errorCode = 0,
+        httpStatusCode = HttpStatus.FORBIDDEN,
+        msg = "Admin role required",
+    )
+
 class ChangePasswordIllegalStateException :
     UserException(
         errorCode = 0,

@@ -10,6 +10,7 @@ import com.wafflestudio.team2server.article.repository.ArticleRepository
 import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.helper.QueryCounter
+import jakarta.servlet.http.Cookie
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -65,6 +66,7 @@ class ArticleIntegrationTests
             mvc
                 .perform(
                     post("/api/v1/articles")
+                        .cookie(Cookie("AUTH-TOKEN", dataGenerator.generateToken("admin")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
                 ).andExpect(status().isCreated)
@@ -124,6 +126,7 @@ class ArticleIntegrationTests
             mvc
                 .perform(
                     patch("/api/v1/articles/${article.id}")
+                        .cookie(Cookie("AUTH-TOKEN", dataGenerator.generateToken("admin")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
                 ).andExpect(status().isOk)
@@ -156,12 +159,16 @@ class ArticleIntegrationTests
             val article = dataGenerator.generateArticle()
 
             mvc
-                .perform(delete("/api/v1/articles/${article.id}"))
-                .andExpect(status().isNoContent)
+                .perform(
+                    delete("/api/v1/articles/${article.id}")
+                        .cookie(Cookie("AUTH-TOKEN", dataGenerator.generateToken("admin"))),
+                ).andExpect(status().isNoContent)
 
             mvc
-                .perform(delete("/api/v1/articles/${article.id}"))
-                .andExpect(status().isNotFound)
+                .perform(
+                    delete("/api/v1/articles/${article.id}")
+                        .cookie(Cookie("AUTH-TOKEN", dataGenerator.generateToken("admin"))),
+                ).andExpect(status().isNotFound)
         }
 
         @Test
@@ -303,6 +310,7 @@ class ArticleIntegrationTests
             mvc
                 .perform(
                     patch("/api/v1/articles/hots")
+                        .cookie(Cookie("AUTH-TOKEN", dataGenerator.generateToken("admin")))
                         .param("hotScore", "4")
                         .contentType(MediaType.APPLICATION_JSON),
                 ).andExpect(status().isOk)

@@ -41,6 +41,8 @@ class DataGenerator(
         return user to jwtProvider.createToken(user.id!!)
     }
 
+    fun generateToken(localId: String): String = jwtProvider.createToken(userRepository.findByLocalId(localId)!!.id!!)
+
     fun generateArticle(
         title: String? = null,
         content: String? = null,
