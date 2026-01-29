@@ -161,6 +161,7 @@ class InboxTests
             mvc
                 .perform(
                     post("/api/v1/articles")
+                        .cookie(Cookie("AUTH-TOKEN", dataGenerator.generateToken("admin")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)),
                 ).andExpect(status().isCreated)

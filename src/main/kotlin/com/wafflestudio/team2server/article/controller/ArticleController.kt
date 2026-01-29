@@ -7,6 +7,8 @@ import com.wafflestudio.team2server.article.dto.response.ArticlePagingResponse
 import com.wafflestudio.team2server.article.dto.response.CreateArticleResponse
 import com.wafflestudio.team2server.article.service.ArticleService
 import com.wafflestudio.team2server.hotstandard.dto.core.HotStandardDto
+import com.wafflestudio.team2server.user.AdminUser
+import com.wafflestudio.team2server.user.model.User
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -71,6 +73,7 @@ class ArticleController(
     )
     @PatchMapping("/hots")
     fun hotsUpdate(
+        @Parameter(hidden = true) @AdminUser user: User,
         @Parameter(
             description = "총 점수 기준",
             example = "10",
@@ -78,7 +81,7 @@ class ArticleController(
         @Parameter(
             description = "조회수 가중치",
             example = "1.0",
-        )@RequestParam(value = "viewsWeight", required = false) viewsWeight: kotlin.Double?,
+        )@RequestParam(value = "viewsWeight", required = false) viewsWeight: Double?,
     ): ResponseEntity<HotStandardDto> {
         val hotStandardDto =
             articleService.hotsUpdate(
@@ -88,7 +91,7 @@ class ArticleController(
         return ResponseEntity.ok(hotStandardDto)
     }
 
-    @Operation(summary = "게시글 생성", description = "게시판에 글이 작성되는지 확인.")
+    @Operation(summary = "게시글 생성", description = "전용 게시판에 게시글 작성")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "게시글 생성"),
@@ -98,6 +101,7 @@ class ArticleController(
     )
     @PostMapping
     fun create(
+        @Parameter(hidden = true) @AdminUser user: User,
         @RequestBody createArticleRequest: CreateArticleRequest,
     ): ResponseEntity<CreateArticleResponse> {
         val articleDto =
@@ -194,6 +198,7 @@ class ArticleController(
     )
     @PatchMapping("/{articleId}")
     fun update(
+        @Parameter(hidden = true) @AdminUser user: User,
         @Parameter(
             description = "게시글 ID",
             example = "1",
@@ -222,6 +227,7 @@ class ArticleController(
     )
     @DeleteMapping("/{articleId}")
     fun delete(
+        @Parameter(hidden = true) @AdminUser user: User,
         @Parameter(
             description = "게시글 ID",
             example = "1",

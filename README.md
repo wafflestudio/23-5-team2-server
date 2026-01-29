@@ -19,6 +19,17 @@
 
 - AUTH-TOKEN 쿠키를 사용합니다.
 
+## 사용자 권한
+
+- 사용자의 권한은 users 테이블의 role INT 필드에 저장되며, 기본값은 0입니다
+- 관리자 권한은 1000으로 설정됩니다
+
+## Admin
+
+- db 초기화 시 id: admin, pw: admin, role: 1000 인 사용자가 생성됩니다
+- 테스트는 이 상태를 기준으로 작성됩니다
+- 배포 환경에서는 배포 즉시 비밀번호를 변경해야 합니다
+
 ## Google OAuth2
 
 - `/oauth2/authorization/google?redirect_uri=` 로 이동하면 구글 로그인 과정이 진행됩니다. 
