@@ -26,7 +26,7 @@
 
 ## Admin
 
-- db 초기화 시 id: admin, pw: admin, role: 1000 인 사용자가 생성됩니다
+- db 초기화 시 id: admin, pw: adminadmin, role: 1000 인 사용자가 생성됩니다
 - 테스트는 이 상태를 기준으로 작성됩니다
 - 배포 환경에서는 배포 즉시 비밀번호를 변경해야 합니다
 
