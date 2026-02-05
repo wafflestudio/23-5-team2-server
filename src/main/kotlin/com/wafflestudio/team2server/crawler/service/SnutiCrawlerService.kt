@@ -127,36 +127,32 @@ class SnutiCrawlerService(
     }
 
     override fun crawl() {
-        try {
-            val listDoc = fetch(listUrl)
+        val listDoc = fetch(listUrl)
 
-            val rows = getPostList(listDoc)
+        val rows = getPostList(listDoc)
 
-            for (row in rows) {
-                val rawLink = getPostLink(row)
-                val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
+        for (row in rows) {
+            val rawLink = getPostLink(row)
+            val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
 
-                if (articleRepository.existsByOriginLink(detailUrl)) {
-                    continue
-                }
-
-                val detailDoc = fetchDetail(detailUrl)
-
-                val title = getPostTitle(row)
-
-                val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
-
-                articleService.saveNewArticle(article)
-
-                Thread.sleep(500)
+            if (articleRepository.existsByOriginLink(detailUrl)) {
+                continue
             }
-        } catch (_: Exception) {
+
+            val detailDoc = fetchDetail(detailUrl)
+
+            val title = getPostTitle(row)
+
+            val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
+
+            articleService.saveNewArticle(article)
+
+            Thread.sleep(500)
         }
     }
 
     @Scheduled(fixedRate = 3600000)
-    fun runScheduled() {
-        crawl()
-        updateExecutionTime()
+    override fun runScheduled() {
+        super.runScheduled()
     }
 }
