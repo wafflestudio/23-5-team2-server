@@ -1,0 +1,1 @@
+INSERT INTO users (local_id, password, role) VALUES ('admin', 'admin', 1000);
