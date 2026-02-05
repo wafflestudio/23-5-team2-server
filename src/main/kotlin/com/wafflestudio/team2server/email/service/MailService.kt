@@ -25,10 +25,15 @@ class MailService(
         val port = environment.getProperty("spring.mail.port") ?: "not set"
         val username = environment.getProperty("spring.mail.username") ?: "not set"
         val hasPassword = !environment.getProperty("spring.mail.password").isNullOrBlank()
-        
-        logger.info("이메일 설정 초기화: host={}, port={}, username={}, password={}", 
-            host, port, username, if (hasPassword) "설정됨" else "설정되지 않음")
-        
+
+        logger.info(
+            "이메일 설정 초기화: host={}, port={}, username={}, password={}",
+            host,
+            port,
+            username,
+            if (hasPassword) "설정됨" else "설정되지 않음",
+        )
+
         if (!hasPassword || username == "not set") {
             logger.warn("이메일 설정이 완전하지 않습니다. MAIL_USERNAME과 MAIL_PASSWORD 환경 변수를 확인하세요.")
         }
