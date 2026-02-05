@@ -107,7 +107,7 @@ jobs:
               -e AWS_S3_ACCESS_KEY="$AWS_S3_ACCESS_KEY" \
               -e AWS_S3_SECRET_KEY="$AWS_S3_SECRET_KEY" \
               -e MAIL_USERNAME="$MAIL_USERNAME" \
-              -e MAIL_PASSWORD:"$MAIL_PASSWORD" \
+              -e MAIL_PASSWORD="$MAIL_PASSWORD" \
               -e JWT_SECRET="$JWT_SECRET" \
               $IMAGE
             
