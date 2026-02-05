@@ -39,7 +39,6 @@ dependencies {
     implementation("com.mysql:mysql-connector-j")
     implementation("org.flywaydb:flyway-mysql")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
