@@ -1,0 +1,55 @@
+package com.wafflestudio.team2server.article.dto.core
+
+import com.wafflestudio.team2server.article.model.Article
+import com.wafflestudio.team2server.article.model.ArticleWithBoard
+import com.wafflestudio.team2server.board.dto.core.BoardDto
+import com.wafflestudio.team2server.board.model.Board
+import java.time.Instant
+
+data class ArticleDto(
+    val id: Long,
+    val board: BoardDto,
+    val title: String,
+    val content: String,
+    val author: String,
+    val originLink: String?,
+    val publishedAt: Instant,
+    val createdAt: Instant,
+    val updatedAt: Instant,
+    val dislikes: Int = 0,
+    val likes: Int = 0,
+    val views: Int = 0,
+) {
+    constructor(article: Article, board: Board) : this(
+        id = article.id!!,
+        board = BoardDto(board),
+        title = article.title,
+        content = article.content,
+        author = article.author,
+        views = article.views,
+        originLink = article.originLink,
+        publishedAt = article.publishedAt,
+        createdAt = article.createdAt!!,
+        updatedAt = article.updatedAt!!,
+    )
+
+    constructor(articleWithBoard: ArticleWithBoard) : this(
+        id = articleWithBoard.id,
+        board =
+            BoardDto(
+                id = articleWithBoard.board!!.id,
+                name = articleWithBoard.board.name,
+                sourceUrl = articleWithBoard.board.sourceUrl,
+            ),
+        title = articleWithBoard.title,
+        content = articleWithBoard.content,
+        author = articleWithBoard.author,
+        views = articleWithBoard.views,
+        originLink = articleWithBoard.originLink,
+        publishedAt = articleWithBoard.publishedAt,
+        createdAt = articleWithBoard.createdAt,
+        updatedAt = articleWithBoard.updatedAt,
+        dislikes = articleWithBoard.dislikes,
+        likes = articleWithBoard.likes,
+    )
+}

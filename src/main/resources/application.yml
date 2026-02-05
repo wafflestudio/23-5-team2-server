@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: 23-5-team2-server
+
+  config:
+    import: optional:file:.env[.properties]
+
+  # Database Connection
+  datasource:
+    url: jdbc:mysql://localhost:3306/${DB_NAME:mydatabase}
+    username: ${DB_USER:user}
+    password: ${DB_PASSWORD:secret}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  # Google OAuth2
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: email
+
+app:
+  frontend:
+    url: http://localhost:5173,https://localhost:5173,http://localhost:8080,https://d2sajtt7b5xbu6.cloudfront.net
+
+jwt:
+  secret: ${JWT_SECRET:this-is-a-very-long-and-secure-secret-key-for-jwt-token-generation}
+  expiration-in-ms: 86400000
+
+# Actuator Health
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+  health:
+    mail:
+      enabled: false
+
+# AWS S3
+cloud:
+  aws:
+    s3:
+      bucket: waffle-snuboard-bucket
+      directory: local/images
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY}
+      secretKey: ${AWS_S3_SECRET_KEY}
