@@ -65,10 +65,10 @@ class CrawlerTests
                     post("/api/crawlers/snuti/run"),
                 ).andExpect(status().isOk)
 
-            verify(mysnuCrawlerService).crawl()
-            verify(cseCrawlerService).crawl()
-            verify(careerCrawlerService).crawl()
-            verify(snutiCrawlerService).crawl()
+            verify(mysnuCrawlerService).runScheduled()
+            verify(cseCrawlerService).runScheduled()
+            verify(careerCrawlerService).runScheduled()
+            verify(snutiCrawlerService).runScheduled()
         }
 
         @Test
