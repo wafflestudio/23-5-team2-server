@@ -1,7 +1,10 @@
 package com.wafflestudio.team2server.email.service
 
 import com.wafflestudio.team2server.article.model.Article
+import jakarta.annotation.PostConstruct
 import jakarta.mail.internet.MimeMessage
+import org.slf4j.LoggerFactory
+import org.springframework.core.env.Environment
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Async
@@ -12,12 +15,36 @@ import java.time.format.DateTimeFormatter
 @Service
 class MailService(
     private val javaMailSender: JavaMailSender,
+    private val environment: Environment,
 ) {
+    private val logger = LoggerFactory.getLogger(MailService::class.java)
+
+    @PostConstruct
+    fun logMailConfiguration() {
+        val host = environment.getProperty("spring.mail.host") ?: "not set"
+        val port = environment.getProperty("spring.mail.port") ?: "not set"
+        val username = environment.getProperty("spring.mail.username") ?: "not set"
+        val hasPassword = !environment.getProperty("spring.mail.password").isNullOrBlank()
+
+        logger.info(
+            "이메일 설정 초기화: host={}, port={}, username={}, password={}",
+            host,
+            port,
+            username,
+            if (hasPassword) "설정됨" else "설정되지 않음",
+        )
+
+        if (!hasPassword || username == "not set") {
+            logger.warn("이메일 설정이 완전하지 않습니다. MAIL_USERNAME과 MAIL_PASSWORD 환경 변수를 확인하세요.")
+        }
+    }
+
     @Async
     fun sendArticleNotification(
         email: String,
         article: Article,
     ) {
+        logger.info("이메일 발송 시작: 수신자={}, 제목={}, 게시글ID={}", email, article.title, article.id)
         val subject = "[새 글 알림] ${article.title}"
         val htmlBody = createHtmlBody(article)
 
@@ -30,6 +57,7 @@ class MailService(
         htmlBody: String,
     ) {
         try {
+            logger.debug("이메일 메시지 생성 시작: 수신자={}, 제목={}", to, subject)
             val message: MimeMessage = javaMailSender.createMimeMessage()
             val helper = MimeMessageHelper(message, true, "UTF-8")
 
@@ -37,8 +65,19 @@ class MailService(
             helper.setSubject(subject)
             helper.setText(htmlBody, true)
 
+            logger.debug("이메일 전송 시도: 수신자={}, 제목={}", to, subject)
             javaMailSender.send(message)
+            logger.info("이메일 발송 성공: 수신자={}, 제목={}", to, subject)
+        } catch (e: jakarta.mail.AuthenticationFailedException) {
+            logger.error("이메일 인증 실패: 수신자={}, 제목={}, 오류={}", to, subject, e.message, e)
+        } catch (e: jakarta.mail.MessagingException) {
+            logger.error("이메일 메시징 오류: 수신자={}, 제목={}, 오류={}", to, subject, e.message, e)
+        } catch (e: java.net.SocketTimeoutException) {
+            logger.error("이메일 전송 타임아웃: 수신자={}, 제목={}, 오류={}", to, subject, e.message, e)
+        } catch (e: java.net.ConnectException) {
+            logger.error("이메일 서버 연결 실패: 수신자={}, 제목={}, 오류={}", to, subject, e.message, e)
         } catch (e: Exception) {
+            logger.error("이메일 발송 실패: 수신자={}, 제목={}, 오류타입={}, 오류={}", to, subject, e.javaClass.simpleName, e.message, e)
         }
     }
 
