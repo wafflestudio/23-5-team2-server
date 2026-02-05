@@ -68,12 +68,25 @@ abstract class BaseCrawler(
         }
     }
 
-    protected fun fetch(url: String): Document =
-        Jsoup
-            .connect(url)
-            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-            .timeout(10000)
-            .get()
+    protected fun fetch(url: String): Document {
+        var lastException: Exception? = null
+
+        repeat(3) { attempt ->
+            try {
+                return Jsoup
+                    .connect(url)
+                    .timeout(10000)
+                    .get()
+            } catch (e: Exception) {
+                println("$url ${attempt + 1}th request failed")
+                lastException = e
+                Thread.sleep(1000)
+            }
+        }
+
+        // If we reach this point, all 3 attempts failed
+        throw lastException ?: Exception("Unknown error fetching URL: $url")
+    }
 
     protected fun updateExecutionTime() {
         try {

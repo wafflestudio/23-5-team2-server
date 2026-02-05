@@ -25,7 +25,7 @@ class CrawlerController(
                 ?: return ResponseEntity.notFound().build()
 
         try {
-            targetCrawler.crawl()
+            targetCrawler.runScheduled()
             return ResponseEntity.ok("크롤러($crawlerCode) 실행 완료!")
         } catch (e: Exception) {
             return ResponseEntity.internalServerError().body(" 실행 실패: ${e.message}")
