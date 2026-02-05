@@ -64,7 +64,7 @@ class CareerCrawlerService(
             try {
                 val localDate = LocalDate.parse(dateStr, detailDateFormatter)
                 localDate.atStartOfDay(ZoneId.of("Asia/Seoul")).toInstant()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 Instant.now()
             }
 
@@ -81,8 +81,7 @@ class CareerCrawlerService(
     }
 
     @Scheduled(fixedRate = 86400000)
-    fun runScheduled() {
-        crawl()
-        updateExecutionTime()
+    override fun runScheduled() {
+        super.runScheduled()
     }
 }

@@ -35,50 +35,44 @@ class CseCrawlerService(
         var collectedCount = 0
         val targetCount = 20
 
-        try {
-            while (collectedCount < targetCount) {
-                val pageUrl = "$listUrl?pageNum=$page"
+        while (collectedCount < targetCount) {
+            val pageUrl = "$listUrl?pageNum=$page"
 
-                val document = fetch(pageUrl)
+            val document = fetch(pageUrl)
 
-                val rows = getPostList(document)
-                if (rows.isEmpty()) break
+            val rows = getPostList(document)
+            if (rows.isEmpty()) break
 
-                for (row in rows) {
-                    if (collectedCount >= targetCount) break
+            for (row in rows) {
+                if (collectedCount >= targetCount) break
 
-                    val tempTitle = getPostTitle(row)
+                val tempTitle = getPostTitle(row)
 
-                    if (tempTitle.isBlank()) {
-                        continue
-                    }
-
-                    if (isPinnedPost(row)) {
-                        continue
-                    }
-
-                    val rawLink = getPostLink(row)
-                    val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
-
-                    if (!articleRepository.existsByOriginLink(detailUrl)) {
-                        val title = getPostTitle(row)
-
-                        val detailDoc = fetch(detailUrl)
-
-                        val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
-                        articleService.saveNewArticle(article)
-                    }
-
-                    collectedCount++
+                if (tempTitle.isBlank()) {
+                    continue
                 }
 
-                page++
-                Thread.sleep(500)
+                if (isPinnedPost(row)) {
+                    continue
+                }
+
+                val rawLink = getPostLink(row)
+                val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
+
+                if (!articleRepository.existsByOriginLink(detailUrl)) {
+                    val title = getPostTitle(row)
+
+                    val detailDoc = fetch(detailUrl)
+
+                    val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
+                    articleService.saveNewArticle(article)
+                }
+
+                collectedCount++
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            updateExecutionTime()
+
+            page++
+            Thread.sleep(500)
         }
     }
 
@@ -157,7 +151,7 @@ class CseCrawlerService(
     }
 
     @Scheduled(fixedRate = 3600000)
-    fun runScheduled() {
-        crawl()
+    override fun runScheduled() {
+        super.runScheduled()
     }
 }

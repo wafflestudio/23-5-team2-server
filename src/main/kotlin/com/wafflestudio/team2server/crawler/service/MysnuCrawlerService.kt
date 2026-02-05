@@ -81,8 +81,7 @@ class MysnuCrawlerService(
     }
 
     @Scheduled(fixedRate = 3600000)
-    fun runScheduled() {
-        crawl()
-        updateExecutionTime()
+    override fun runScheduled() {
+        super.runScheduled()
     }
 }

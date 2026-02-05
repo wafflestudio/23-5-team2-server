@@ -44,37 +44,34 @@ abstract class BaseCrawler(
      * 이 메서드를 override 하여 사이트 특성에 맞는 탐색 로직을 직접 구현해야 합니다.
      */
     open fun crawl() {
-        try {
-            val listDoc = fetch(listUrl)
+        val listDoc = fetch(listUrl)
 
-            val rows = getPostList(listDoc)
+        val rows = getPostList(listDoc)
 
-            for (row in rows) {
-                val rawLink = getPostLink(row)
-                val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
+        for (row in rows) {
+            val rawLink = getPostLink(row)
+            val detailUrl = if (rawLink.startsWith("http")) rawLink else "$baseUrl$rawLink"
 
-                if (articleRepository.existsByOriginLink(detailUrl)) {
-                    continue
-                }
-
-                val detailDoc = fetch(detailUrl)
-
-                val title = getPostTitle(row)
-
-                val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
-
-                articleService.saveNewArticle(article)
-
-                Thread.sleep(500)
+            if (articleRepository.existsByOriginLink(detailUrl)) {
+                continue
             }
-        } catch (_: Exception) {
+
+            val detailDoc = fetch(detailUrl)
+
+            val title = getPostTitle(row)
+
+            val article = parseDetailAndGetArticle(targetBoardId, row, detailDoc, detailUrl, title)
+
+            articleService.saveNewArticle(article)
+
+            Thread.sleep(500)
         }
     }
 
     protected fun fetch(url: String): Document =
         Jsoup
             .connect(url)
-            .userAgent("Mozilla/5.0 ...")
+            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
             .timeout(10000)
             .get()
 
@@ -84,6 +81,17 @@ abstract class BaseCrawler(
             val next = now.plusSeconds(crawlIntervalSeconds)
             crawlerRepository.updateLastCrawledAt(targetBoardId, now, next)
         } catch (_: Exception) {
+        }
+    }
+
+    open fun runScheduled() {
+        try {
+            crawl()
+            updateExecutionTime()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            val currentDatetime = Instant.now()
+            println("Error in crawler $code ${e.message} $currentDatetime")
         }
     }
 }
