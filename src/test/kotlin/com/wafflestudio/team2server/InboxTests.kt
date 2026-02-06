@@ -1,6 +1,7 @@
 package com.wafflestudio.team2server
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.wafflestudio.team2server.article.dto.UpdateArticleRequest
 import com.wafflestudio.team2server.article.dto.request.CreateArticleRequest
 import com.wafflestudio.team2server.helper.DataGenerator
 import com.wafflestudio.team2server.inbox.dto.InboxPagingResponse
@@ -193,5 +194,46 @@ class InboxTests
                         .cookie(Cookie("AUTH-TOKEN", token3)),
                 ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.inboxes").value(hasSize<List<Any>>(0)))
+        }
+
+        @Test
+        fun `modifying an article should not add duplicate inboxes`() {
+            // 1. Given: user, subscribing to Board 1
+
+            val (user1, token1) = dataGenerator.generateUser()
+            dataGenerator.generateSubscription(user1.id!!, 1)
+
+            val article = dataGenerator.generateArticle()
+
+            // 2. When: A new article is saved to Board 1
+            val request =
+                UpdateArticleRequest(
+                    title = "title-123",
+                    content = "content",
+                    author = "snu",
+                    originLink = null,
+                    publishedAt = Instant.now(),
+                )
+
+            // when & then
+            mvc
+                .perform(
+                    patch("/api/v1/articles/${article.id}")
+                        .cookie(Cookie("AUTH-TOKEN", dataGenerator.generateToken("admin")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)),
+                ).andExpect(status().isOk)
+
+            // 3. Then: User 1 have 1 inbox item
+
+            // Check User 1
+
+            mvc
+                .perform(
+                    get("/api/v1/inboxes")
+                        .cookie(Cookie("AUTH-TOKEN", token1)),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.inboxes").value(hasSize<List<Any>>(1)))
+                .andExpect(jsonPath("$.inboxes[0].article.title").value("title-123"))
         }
     }

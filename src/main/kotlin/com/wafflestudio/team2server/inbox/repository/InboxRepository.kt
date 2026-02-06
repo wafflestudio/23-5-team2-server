@@ -59,7 +59,7 @@ interface InboxRepository : ListCrudRepository<Inbox, Long> {
     @Transactional
     @Query(
         value = """
-        INSERT INTO inboxes (user_id, article_id)
+        INSERT IGNORE INTO inboxes (user_id, article_id)
         SELECT s.user_id, :articleId
         FROM subscriptions s
         WHERE s.board_id = :boardId
